@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -26,13 +27,21 @@ class Product(models.Model):
     description = models.TextField(null=False, blank=True, db_index=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
-    price = models.DecimalField(efault=0, max_digits=8, decimal_places=2)
+    price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     discount = models.SmallIntegerField(default=0)
     archived = models.BooleanField(default=False)
     stock = models.PositiveIntegerField(default=0)
-    preview = models.ImageField(upload_to='products/', blank=True, null=True)
+    preview = models.ImageField(upload_to=product_preview_directory_path, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+class Orders(models.Model):
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    delivery_address = models.TextField() # <- maybe change to class and Foreignkey???
+    order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, default='В обработке')
+    products = models.ManyToManyField(Product, related_name="orders")
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
