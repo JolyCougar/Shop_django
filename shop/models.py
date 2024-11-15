@@ -40,13 +40,27 @@ class Product(models.Model):
         return self.name
 
 
-class Orders(models.Model):
+def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
+    return "products/product_{pk}/images/{filename}".format(
+        pk=instance.product.pk,
+        filename=filename,
+    )
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to=product_images_directory_path)
+    description = models.CharField(max_length=200, null=False, blank=True)
+
+
+class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    delivery_address = models.TextField()
+    delivery_address = models.TextField(null=False)
     order_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, default='В обработке')
     products = models.ManyToManyField(Product, related_name="orders")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    promo = models.CharField(max_length=20, null=True, blank=True)
 
 
 class Cart(models.Model):
