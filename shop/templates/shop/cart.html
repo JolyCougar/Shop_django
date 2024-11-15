@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+</head>
+<body>
+
+<h1>Ваша корзина</h1>
+<ul>
+    {% for item in cart.cartitem_set.all %}
+        <li>{{ item.product.name }} (x{{ item.quantity }})</li>
+    {% empty %}
+        <li>Ваша корзина пуста.</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
