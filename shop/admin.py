@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from .models import Product, ProductImage, Order, Category, Manufacturer
+from .models import Product, ProductImage, Order, Category, Manufacturer, OrderItem
 
 
 class ProductImageInline(admin.StackedInline):
@@ -59,9 +59,17 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.description[:48] + "..."
 
 
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1  # Количество пустых форм для добавления новых элементов в заказ
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = "delivery_address", "promo", "order_date", 'total_price', "user", 'status'
+    list_display = ('user', 'order_date', 'status', 'total_price')
+    list_filter = ('status',)
+    search_fields = ('user__username',)
+    inlines = [OrderItemInline]  # Включаем элементы заказа в админку
 
 
 @admin.register(Category)

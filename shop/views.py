@@ -38,3 +38,17 @@ class CartView(ListView):
 
     def get_queryset(self):
         return get_object_or_404(Cart, user=self.request.user)
+
+
+class OrdersListView(ListView):
+    model = Order
+    template_name = "shop/orders_list.html"
+    context_object_name = "orders"
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
+
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = "shop/order_detail.html"

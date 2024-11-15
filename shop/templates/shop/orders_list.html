@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders User</title>
+</head>
+<body>
+{% for order in orders %}
+    <h1>Детали заказа #<a href="{% url 'shop:order_detail' order.id %}"> {{ order.id }}</a></h1>
+    <p>Дата заказа: {{ order.order_date }}</p>
+    <p>Статус: {{ order.status }}</p>
+    <p>Итоговая цена: {{ order.total_price }}</p>
+
+{% endfor %}
+
+
+</body>
+</html>
