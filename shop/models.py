@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from shopSite.settings import AUTH_USER_MODEL
 
 
 class Category(models.Model):
@@ -16,11 +16,14 @@ class Manufacturer(models.Model):
         return self.name
 
 
-def product_preview_directory_path(instance: "Product", filename: str) -> str:
-    return "products/product_{pk}/preview/{filename}".format(
-        pk=instance.pk,
-        filename=filename,
-    )
+class ProductPathGenerator:
+    @staticmethod
+    def product_preview_directory_path(instance: "Product", filename: str) -> str:
+        return f"products/product_{instance.pk}/preview/{filename}"
+
+    @staticmethod
+    def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
+        return f"products/product_{instance.product.pk}/images/{filename}"
 
 
 class Product(models.Model):
@@ -34,27 +37,20 @@ class Product(models.Model):
     discount = models.SmallIntegerField(default=0)
     archived = models.BooleanField(default=False)
     stock = models.PositiveIntegerField(default=0)
-    preview = models.ImageField(upload_to=product_preview_directory_path, blank=True, null=True)
+    preview = models.ImageField(upload_to=ProductPathGenerator.product_preview_directory_path, blank=True, null=True)
 
     def __str__(self):
         return self.name
 
 
-def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
-    return "products/product_{pk}/images/{filename}".format(
-        pk=instance.product.pk,
-        filename=filename,
-    )
-
-
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to=product_images_directory_path)
+    image = models.ImageField(upload_to=ProductPathGenerator.product_images_directory_path)
     description = models.CharField(max_length=200, null=False, blank=True)
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.PROTECT)
     delivery_address = models.TextField(null=False)
     order_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, default='В обработке')
@@ -75,7 +71,7 @@ class OrderItem(models.Model):
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through='CartItem')
 
 

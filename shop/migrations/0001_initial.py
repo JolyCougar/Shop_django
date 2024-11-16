@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -33,7 +32,9 @@ class Migration(migrations.Migration):
             name='Cart',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    'user',
+                    models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -60,9 +61,12 @@ class Migration(migrations.Migration):
                 ('discount', models.SmallIntegerField(default=0)),
                 ('archived', models.BooleanField(default=False)),
                 ('stock', models.PositiveIntegerField(default=0)),
-                ('preview', models.ImageField(blank=True, null=True, upload_to=shop.models.product_preview_directory_path)),
+                ('preview', models.ImageField(blank=True, null=True,
+                                              upload_to=shop.models.ProductPathGenerator.product_preview_directory_path)),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.category')),
-                ('manufacturer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.manufacturer')),
+                (
+                    'manufacturer',
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.manufacturer')),
             ],
         ),
         migrations.CreateModel(
@@ -70,7 +74,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.PositiveIntegerField(default=1)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='shop.order')),
+                ('order',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='shop.order')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shop.product')),
             ],
         ),
@@ -92,9 +97,10 @@ class Migration(migrations.Migration):
             name='ProductImage',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=shop.models.product_images_directory_path)),
+                ('image', models.ImageField(upload_to=shop.models.ProductPathGenerator.product_images_directory_path)),
                 ('description', models.CharField(blank=True, max_length=200)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='shop.product')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images',
+                                              to='shop.product')),
             ],
         ),
     ]
