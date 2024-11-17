@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Product List</title>
-</head>
-<body>
-{% for product in product_list %}
-    <a href="{% url 'shop:product-detail' product.pk %}"> {{ product.name }}</a>
-    {{ product.description }}
-    <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Добавить в корзину</button>
-</form>
-{% endfor %}
+{% extends 'shop/include/base.html' %}
 
-<a href="{% url 'shop:cart_view' %}">Перейти в корзину</a>
-</body>
-</html>
+{% block content %}
+    {% include 'shop/include/sales.html' %}
+    {% include 'shop/include/popular_products.html' %}
+    {% include 'shop/include/store_benefits.html' %}
+{% endblock %}
