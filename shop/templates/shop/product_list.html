@@ -1,25 +1,24 @@
 {% extends 'shop/include/base.html' %}
 {% load static %}
 
-<div class="layout">
-    {% block content %}
-        <div class="products">
-            <h2>Выбранная категория</h2>
-            <div class="product-list">
-                <div class="product-card">
-                    <img src="{% static 'images/product1.jpg' %}" alt="Product 1">
-                    <h3>Товар 1</h3>
-                    <p>Описание товара.</p>
-                </div>
-
-                <div class="product-card">
-                    <img src="{% static 'images/product2.jpg' %}" alt="Product 2">
-                    <h3>Товар 2</h3>
-                    <p>Описание товара.</p>
-                </div>
-
+{% block filters %}
+    {% include 'shop/include/filters.html' %}
+{% endblock %}
+{% block content %}
+    <div class="products">
+        <h2>Все товары:</h2>
+    <div class="product-list">
+        {% for product in product_list %}
+            <div class="product-card">
+                <a href="{% url 'shop:product-detail' product.id %}">
+                    <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.marketing_info }}</p>
+                </a>
             </div>
-        </div>
+        {% endfor %}
+    </div>
+    </div>
+        
 
-    {% endblock %}
-</div>
+{% endblock %}

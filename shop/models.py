@@ -29,6 +29,7 @@ class ProductPathGenerator:
 class Product(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     description = models.TextField(null=False, blank=True, db_index=True)
+    marketing_info = models.TextField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
