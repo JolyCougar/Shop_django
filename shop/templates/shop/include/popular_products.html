@@ -2,26 +2,15 @@
     <div class="container">
         <h2>Самые популярные товары</h2>
         <div class="product-grid">
+            {% for product in product_list|slice:":5" %}
             <div class="product-card">
-                <img src="product.png" alt="AirPods Pro 2">
-                <h3>Products 2</h3>
-                <p>Descriptions.</p>
+                <a href="{% url 'shop:product-detail' product.id %}">  {# Замените 'product_detail' на имя вашего URL-шаблона #}
+                    <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>Descriptions.</p>
+                </a>
             </div>
-            <div class="product-card">
-                <img src="product.png" alt="Apple MacBook">
-                <h3>Product</h3>
-                <p>Descriptions.</p>
-            </div>
-            <div class="product-card">
-                <img src="product.png" alt="Apple iPad">
-                <h3>Product</h3>
-                <p>Descriptions</p>
-            </div>
-            <div class="product-card">
-                <img src="product.png" alt="iMac">
-                <h3>Product</h3>
-                <p>Descriptions.</p>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>

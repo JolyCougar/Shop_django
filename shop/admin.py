@@ -28,15 +28,17 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [
         ProductImageInline
     ]
-    list_display = "pk", "name", 'category', "description_short", 'stock', "price", "discount", "archived"
+    list_display = ("pk", "name", 'category',"attribute",
+                    "description_short", 'stock', "price",
+                    "discount", "archived")
     list_display_links = "pk", "name"
     ordering = "name", "pk"
     search_fields = "name", "description"
     fieldsets = [
         (None, {
             "fields": ("name", "description",
-                       "category", "manufacturer",
-                       "stock"),
+                       "attribute", "category",
+                       "stock", "manufacturer"),
             "classes": ("wide", "collapse"),
         }),
         ("Price options", {

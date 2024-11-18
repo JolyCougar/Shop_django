@@ -37,6 +37,7 @@ class Product(models.Model):
     discount = models.SmallIntegerField(default=0)
     archived = models.BooleanField(default=False)
     stock = models.PositiveIntegerField(default=0)
+    attribute = models.TextField(null=False, blank=True, db_index=True)
     preview = models.ImageField(upload_to=ProductPathGenerator.product_preview_directory_path, blank=True, null=True)
 
     def __str__(self):
