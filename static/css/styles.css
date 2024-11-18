@@ -511,3 +511,148 @@ button.prev-slide:hover, button.next-slide:hover {
     }
 }
 
+/* Фильтры */
+/* Общая структура */
+/* Компоновка для фильтров и контента */
+.layout {
+    display: flex;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Фильтры */
+.filters {
+    width: 250px;
+    background-color: var(--bg-color);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    position: sticky;
+    top: 20px; /* Зафиксировать фильтры */
+    height: fit-content;
+}
+
+.filters h2 {
+    font-size: 18px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.filter-item {
+    margin-bottom: 20px;
+}
+
+.filter-item h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.filter-item form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-item input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.filter-item label {
+    font-size: 14px;
+}
+
+.filter-item input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.filter-item nav a {
+    display: block;
+    font-size: 14px;
+    color: var(--text-color);
+    padding: 5px 0;
+    text-decoration: none;
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+.filter-item nav a:hover {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Секция товаров */
+.products h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px var(--card-hover-color);
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.product-card h3 {
+    font-size: 16px;
+    color: var(--text-color);
+    margin: 10px 0;
+}
+
+.product-card p {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .filters {
+        width: 100%;
+        position: relative;
+    }
+
+    .products .product-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .products .product-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+

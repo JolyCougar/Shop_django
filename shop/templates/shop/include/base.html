@@ -4,21 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}
-    	My Shop
-    {% endblock %}</title>
+    <title>{% block title %}My Shop{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    {% include 'shop/include/header.html' %}
-    {% include 'shop/include/navi_bar.html' %}
+{% include 'shop/include/header.html' %}
+{% include 'shop/include/navi_bar.html' %}
 
-    <main>
-        {% block content %}{% endblock %}
+<!-- Основная область -->
+<div class="layout">
+    <!-- Левая часть (фильтры) -->
+    {% block filters %}
+        {% include 'shop/include/filters.html' %}
+    {% endblock %}
+
+    <!-- Правая часть (контент) -->
+    <main class="main-content">
+        {% block content %}
+            <!-- Контент будет вставлен здесь -->
+        {% endblock %}
     </main>
+</div>
 
-    {% include 'shop/include/footer.html' %}
+{% include 'shop/include/footer.html' %}
 <script src="{% static 'js/scripts.js' %}"></script>
 </body>
-
 </html>

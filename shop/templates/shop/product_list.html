@@ -1,7 +1,25 @@
 {% extends 'shop/include/base.html' %}
+{% load static %}
 
-{% block content %}
-    {% include 'shop/include/sales.html' %}
-    {% include 'shop/include/popular_products.html' %}
-    {% include 'shop/include/store_benefits.html' %}
-{% endblock %}
+<div class="layout">
+    {% block content %}
+        <div class="products">
+            <h2>Выбранная категория</h2>
+            <div class="product-list">
+                <div class="product-card">
+                    <img src="{% static 'images/product1.jpg' %}" alt="Product 1">
+                    <h3>Товар 1</h3>
+                    <p>Описание товара.</p>
+                </div>
+
+                <div class="product-card">
+                    <img src="{% static 'images/product2.jpg' %}" alt="Product 2">
+                    <h3>Товар 2</h3>
+                    <p>Описание товара.</p>
+                </div>
+
+            </div>
+        </div>
+
+    {% endblock %}
+</div>
