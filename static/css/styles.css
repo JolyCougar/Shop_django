@@ -655,4 +655,119 @@ button.prev-slide:hover, button.next-slide:hover {
     }
 }
 
+.product-page {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.product-images {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.product-images img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    cursor: pointer;
+}
+
+.product-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 15px; /* Отступ справа для главного изображения */
+    overflow-y: auto; /* Добавляем прокрутку, если слишком много миниатюр */
+}
+
+.thumbnail {
+    width: 100px; /* Фиксированная ширина */
+    height: 100px; /* Фиксированная высота */
+    object-fit: cover; /* Обрезаем изображение, чтобы оно вписывалось в квадрат */
+    border: 2px solid transparent; /* По умолчанию без рамки */
+    cursor: pointer; /* Указатель на курсор */
+    transition: border-color 0.3s ease; /* Анимация изменения рамки */
+}
+
+.thumbnail:hover,
+.thumbnail.is-preview {
+    border-color: #007bff; /* Подсветка синей рамкой при наведении */
+}
+
+.product-main-image {
+    width: 500px; /* Фиксированная ширина главного изображения */
+    height: 500px; /* Фиксированная высота главного изображения */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-main-image img {
+    max-width: 100%; /* Изображение масштабируется внутри контейнера */
+    max-height: 100%; /* Сохраняем пропорции и помещаем в контейнер */
+    display: block;
+}
+
+.product-details {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-details h1 {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.product-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.product-details li {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.price-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.old-price {
+    font-size: 18px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.current-price {
+    font-size: 24px;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.btn-add-to-cart {
+    padding: 10px 20px;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-add-to-cart:hover {
+    background-color: var(--hover-color);
+}
+
 

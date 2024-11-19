@@ -44,6 +44,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_all_images(self):
+        images = []
+        if self.preview:  # Если preview доступен
+            images.append({'url': self.preview.url, 'is_preview': True})
+        images += [{'url': img.image.url, 'is_preview': False} for img in self.images.all()]
+        return images
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
