@@ -9,7 +9,7 @@
 <h1>Ваша корзина</h1>
 <ul>
     {% for item in cart.cartitem_set.all %}
-        <li>{{ item.product.name }} (x{{ item.quantity }})</li>
+        <li>{{ item.product.name }} (x{{ item.quantity }}) - {{ item.product.price }}</li>
     {% empty %}
         <li>Ваша корзина пуста.</li>
     {% endfor %}

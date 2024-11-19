@@ -33,9 +33,12 @@
             {% if product.old_price %}
             <p class="old-price">{{ product.old_price }} ₽</p>
             {% endif %}
-            <p class="current-price">{{ product.price }} ₽</p>
+            <p class="current-price">Цена: {{ product.price }} ₽</p>
         
-            <button class="btn btn-add-to-cart">Добавить в корзину</button>
+             <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-add-to-cart">Добавить в корзину</button>
+    </form>
         
         </div>
     </div>
