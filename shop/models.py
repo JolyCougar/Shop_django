@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from shopSite.settings import AUTH_USER_MODEL
 
@@ -33,6 +35,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
     price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
+    discounted_price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     discount = models.SmallIntegerField(default=0)
@@ -46,10 +49,20 @@ class Product(models.Model):
 
     def get_all_images(self):
         images = []
-        if self.preview:  # Если preview доступен
+        if self.preview:
             images.append({'url': self.preview.url, 'is_preview': True})
         images += [{'url': img.image.url, 'is_preview': False} for img in self.images.all()]
         return images
+
+    def save(self, *args, **kwargs):
+        # Рассчитываем цену со скидкой
+        if self.discount > 0:
+            discount_amount = self.price * (self.discount / Decimal(100))
+            self.discounted_price = self.price - discount_amount
+        else:
+            self.discounted_price = self.price
+
+        super().save(*args, **kwargs)
 
 
 class ProductImage(models.Model):

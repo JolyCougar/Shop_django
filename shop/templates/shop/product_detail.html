@@ -27,13 +27,13 @@
     <div class="product-details">
         <h1>{{ product.name }}</h1>
         <ul>
-            {{ product.attribute }}
+            {{ product.attribute | safe }}
         </ul>
         <div class="price-block">
-            {% if product.old_price %}
-            <p class="old-price">{{ product.old_price }} ₽</p>
+            {% if product.discount > 0 %}
+            <p class="old-price">Старая цена: {{ product.price }} ₽</p>
             {% endif %}
-            <p class="current-price">Цена: {{ product.price }} ₽</p>
+            <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
         
              <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
         {% csrf_token %}

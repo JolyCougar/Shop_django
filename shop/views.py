@@ -1,4 +1,8 @@
 import logging
+from decimal import Decimal
+from itertools import product
+from unicodedata import decimal
+
 from .models import Product, Order, Cart, CartItem
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, View
@@ -15,6 +19,7 @@ class ProductListView(ListView):
 class ProductDetailView(DetailView):
     model = Product
     template_name = "shop/product_detail.html"
+
 
 
 class AddToCartView(View):
