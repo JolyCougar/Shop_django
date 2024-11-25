@@ -1,8 +1,10 @@
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import CustomUserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
+from shopSite.settings import AUTH_USER_MODEL
+from .models import CustomUser
 import logging
 
 log = logging.getLogger(__name__)
@@ -26,3 +28,9 @@ class CustomLogoutView(LogoutView):
         log.info(f'User {request.user.username} вышел из системы.')
         response = super().get(request, *args, **kwargs)
         return response
+
+
+class ProfileView(DetailView):
+    model = CustomUser
+    template_name = "account/profile.html"
+    context_object_name = "user"

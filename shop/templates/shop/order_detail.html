@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Orders User</title>
-</head>
-<body>
-<h1>Детали заказа #{{ order.id }}</h1>
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+	Профиль {{ user.username }}
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h1>Заказ #{{ order.id }}</h1>
 <p>Пользователь: {{ order.user.username }}</p>
 <p>Дата заказа: {{ order.order_date }}</p>
 <p>Статус: {{ order.status }}</p>
@@ -23,5 +27,9 @@
     {% endfor %}
 </ul>
 
-</body>
-</html>
+
+{% endblock %}
+
+
+
+

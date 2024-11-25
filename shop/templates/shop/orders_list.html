@@ -1,18 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Orders User</title>
-</head>
-<body>
-{% for order in orders %}
-    <h1>Детали заказа #<a href="{% url 'shop:order_detail' order.id %}"> {{ order.id }}</a></h1>
-    <p>Дата заказа: {{ order.order_date }}</p>
-    <p>Статус: {{ order.status }}</p>
-    <p>Итоговая цена: {{ order.total_price }}</p>
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Профиль {{ user.username }}
+{% endblock %}
 
-{% endfor %}
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container profile">
+        <h1>Мои заказы</h1>
+
+        <div class="profile-orders">
+            {% if orders %}
+                <table class="orders-table">
+                    <thead>
+                    <tr>
+                        <th>Заказ #</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Сумма</th>
+                        <th>Детали</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.order_date|date:"d.m.Y H:i" }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.total_price }} руб.</td>
+                            <td><a href="{% url 'shop:order_detail' order.id %}" class="view-details">Просмотреть</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>У вас нет заказов.</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
 
 
-</body>
-</html>
+
+
+
+
+
+

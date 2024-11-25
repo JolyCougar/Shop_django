@@ -1,0 +1,19 @@
+<aside class="filters">
+    
+    <div class="filter-item">
+        <h3>Профиль</h3>
+        <form>
+            <a href="{% url 'shop:orders_user' %}"> Изменить профиль</a>
+            <a href="{% url 'shop:orders_user' %}"> Сменить пароль</a>
+        </form>
+    </div>
+    <div class="filter-item">
+        <h3>Заказы</h3>
+        <form>
+           <a href="{% url 'shop:orders_user' %}"> Заказы</a>
+            <a href="{% url 'shop:orders_user' %}"> Активные заказы</a>
+            <a href="{% url 'shop:orders_user' %}"> Выполненные заказы</a>
+        </form>
+    </div>
+</aside>
+

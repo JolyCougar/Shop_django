@@ -1,6 +1,6 @@
 <header>
     <div class="container header">
-        <div class="logo">MY<span>Shop</span></div>
+        <a href="/"><div class="logo">MY<span>Shop</span></div></a>
         <nav class="main-nav">
             <a href="#" title="О компании">О компании</a>
             <a href="#" title="Доставка">Доставка</a>
@@ -12,7 +12,7 @@
             <input type="text" placeholder="Поиск" aria-label="Поиск товаров">
             <a href="#" class="cart" title="Корзина">Корзина</a>
             {% if user.is_authenticated %}
-                <a href="/" class="login"> {{ user.username }}</a>
+                <a href="{% url 'account:profile' user.pk %}" class="login"> {{ user.username }}</a>
                 
                 <form action="{% url 'account:logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}

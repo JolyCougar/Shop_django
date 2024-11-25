@@ -1,0 +1,18 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+	Профиль {{ user.username }}
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h2>Пользователь: {{ user.username }}</h2>
+    <p>Имя : {{ user.first_name }}</p>
+    <p>Фамилия : {{ user.last_name }}</p>
+    <p>E-mail : {{ user.email }}</p>
+    <p>О себе : {{ user.bio }}</p>
+
+{% endblock %}
