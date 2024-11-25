@@ -854,3 +854,14 @@ button.prev-slide:hover, button.next-slide:hover {
     background-color: var(--hover-color);
 }
 
+.logout-link {
+    background: none;
+    border: none;
+    color: #555; /* Цвет текста */
+    text-decoration: None; /* Подчеркивание */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+.logout-link:hover {
+    text-decoration: none; /* Убираем подчеркивание при наведении */
+}

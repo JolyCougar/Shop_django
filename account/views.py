@@ -2,7 +2,10 @@ from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from django.contrib.auth.views import LoginView, LogoutView
+import logging
 
+log = logging.getLogger(__name__)
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
@@ -13,3 +16,13 @@ class RegisterView(CreateView):
         messages.success(self.request, 'Ваш аккаунт был успешно создан!')
         return super().form_valid(form)
 
+
+class CustomLoginView(LoginView):
+    template_name = 'account/login.html'
+
+
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        log.info(f'User {request.user.username} вышел из системы.')
+        response = super().get(request, *args, **kwargs)
+        return response

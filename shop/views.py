@@ -5,9 +5,13 @@ from unicodedata import decimal
 
 from .models import Product, Order, Cart, CartItem
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, View, TemplateView
 
 log = logging.getLogger(__name__)
+
+
+class MainPage(TemplateView):
+    template_name = "shop/main.html"
 
 
 class ProductListView(ListView):
