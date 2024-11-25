@@ -9,10 +9,12 @@
 {% endblock %}
 
 {% block content %}
+    
     <h2>Пользователь: {{ user.username }}</h2>
-    <p>Имя : {{ user.first_name }}</p>
-    <p>Фамилия : {{ user.last_name }}</p>
-    <p>E-mail : {{ user.email }}</p>
-    <p>О себе : {{ user.bio }}</p>
+    <p><img src="{{ user.avatar }}" alt="{{ user.username }}"></p>
+     <p><strong>Имя : </strong> {{ user.first_name }}</p>
+    <p><strong>Фамилия : </strong> {{ user.last_name }}</p>
+    <p><strong>E-mail  : </strong> {{ user.email }}</p>
+    <p><strong>О себе : </strong> {{ user.bio }}</p>
 
 {% endblock %}

@@ -914,3 +914,35 @@ button.prev-slide:hover, button.next-slide:hover {
     }
 }
 
+/* Стили для таблицы с продуктами в заказе */
+.order-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.order-items-table th, .order-items-table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.order-items-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 16px;
+}
+
+.order-items-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.order-items-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.product-image {
+    width: 50px; /* Ширина изображения */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+    border-radius: 5px; /* Закругленные углы */
+}
