@@ -16,7 +16,7 @@
         <div class="order-details">
             <p><strong>Дата заказа:</strong> {{ order.order_date|date:"d.m.Y H:i" }}</p>
             <p><strong>Статус:</strong> {{ order.status }}</p>
-            <p><strong>Статус:</strong> {{ order.delivery_address }}</p>
+            <p><strong>Адрес доставки:</strong> {{ order.delivery_address }}</p>
             <p><strong>Сумма:</strong> {{ order.total_price }} руб.</p>
             <h2>Содержимое заказа:</h2>
             <table class="order-items-table">

@@ -1,11 +1,10 @@
 import logging
-from decimal import Decimal
-from itertools import product
-from unicodedata import decimal
 
-from .models import Product, Order, Cart, CartItem
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, View, TemplateView
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from .models import Product, Order, Cart, CartItem, OrderItem
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import ListView, DetailView, View, TemplateView, CreateView
 
 log = logging.getLogger(__name__)
 
@@ -42,11 +41,70 @@ class AddToCartView(View):
 
 class CartView(ListView):
     model = Cart
-    template_name = "shop/cart.html"
-    context_object_name = "cart"
+    template_name = 'shop/cart.html'
+    context_object_name = 'cart_items'
 
     def get_queryset(self):
-        return get_object_or_404(Cart, user=self.request.user)
+        # Получаем корзину текущего пользователя
+        cart = Cart.objects.get(user=self.request.user)
+        return cart.cartitem_set.all()  # Возвращаем все элементы корзины
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart = Cart.objects.get(user=self.request.user)
+        total_price = sum(item.product.price * item.quantity for item in cart.cartitem_set.all())
+        context['total_price'] = total_price
+        return context
+
+
+class CreateOrderView(CreateView):
+    model = Order
+    template_name = 'shop/order_form.html'  # Создайте этот шаблон для ввода адреса доставки
+    fields = ['delivery_address']
+    success_url = reverse_lazy('shopp:order_success')
+
+    def form_valid(self, form):
+        # Создаем заказ
+        form.instance.user = self.request.user
+        cart = Cart.objects.get(user=self.request.user)
+
+        # Сохраняем заказ, чтобы получить его ID
+        order = form.save(commit=False)  # Не сохраняем еще в БД
+        order.total_price = 0  # Инициализируем общую цену
+        order.save()  # Сохраняем заказ
+
+        total_price = 0
+        for cart_item in cart.cartitem_set.all():
+            OrderItem.objects.create(order=order, product=cart_item.product, quantity=cart_item.quantity)
+            total_price += cart_item.product.price * cart_item.quantity
+
+        order.total_price = total_price  # Обновляем общую цену заказа
+        order.save()  # Сохраняем заказ снова с обновленной ценой
+
+        # Очистка корзины после создания заказа
+        cart.cartitem_set.all().delete()
+
+        return super().form_valid(form)
+
+
+class OrderSuccessView(View):
+    def get(self, request):
+        return render(request, 'shop/order_success.html')
+
+
+class CartItemDeleteView(View):
+    def post(self, request, *args, **kwargs):
+        # Получаем корзину пользователя
+        cart = get_object_or_404(Cart, user=request.user)
+        # Получаем элемент корзины, который нужно удалить
+        cart_item = get_object_or_404(CartItem, cart=cart, id=self.kwargs['pk'])
+
+        # Удаляем элемент из корзины
+        cart_item.delete()
+
+        # Возвращаем JSON-ответ
+        return JsonResponse({'success': True, 'message': 'Item removed from cart.'})
+
 
 
 class OrdersListView(ListView):

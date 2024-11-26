@@ -10,7 +10,7 @@
         </nav>
         <div class="header-tools">
             <input type="text" placeholder="Поиск" aria-label="Поиск товаров">
-            <a href="#" class="cart" title="Корзина">Корзина</a>
+            <a href="{% url 'shop:cart_view' %}" class="cart" title="Корзина">Корзина</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'account:profile' user.pk %}" class="login"> {{ user.username }}</a>
                 

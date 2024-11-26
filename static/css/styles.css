@@ -946,3 +946,36 @@ button.prev-slide:hover, button.next-slide:hover {
     height: auto; /* Автоматическая высота для сохранения пропорций */
     border-radius: 5px; /* Закругленные углы */
 }
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.cart-table th, .cart-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.cart-table th {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.cart-table tr:hover {
+    background-color: #f1f1f1; /* Цвет при наведении */
+}
+
+.product-image {
+    width: 50px; /* Установите ширину изображения */
+    height: auto; /* Автоматическая высота */
+    margin-right: 10px; /* Отступ между изображением и текстом */
+}
+
+.quantity {
+    width: 50px; /* Установите желаемую ширину */
+    padding: 5px; /* Установите внутренние отступы */
+    font-size: 14px; /* Установите размер шрифта */
+}
