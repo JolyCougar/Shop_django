@@ -17,4 +17,26 @@
         <li><a href="#">Product3</a></li>
         <li><a href="#">Product4</a></li>
     </ul>
+    
+    <div class="nav-buttons hidden">
+        <a href="{% url 'shop:cart_view' %}" class="cart-button">Корзина</a>
+        <a href="#" class="profile-button">Профиль</a>
+    </div>
+    
+    
+    
+    <script>
+    // Найти контейнер с кнопками
+    const navButtons = document.querySelector('.nav-buttons');
+
+    // Добавить событие на прокрутку страницы
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) { // Если прокрутка больше 100px
+            navButtons.classList.add('visible');
+        } else {
+            navButtons.classList.remove('visible');
+        }
+    });
+</script>
+
 </nav>

@@ -13,12 +13,12 @@
             <a href="{% url 'shop:cart_view' %}" class="cart" title="Корзина">Корзина</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'account:profile' user.pk %}" class="login"> {{ user.username }}</a>
-                
+
                 <form action="{% url 'account:logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="logout-link login">Выйти</button>
                 </form>
-                
+
             {% else %}
                 <a href="{% url 'account:login' %}" class="login" title="Войти">Войти</a>
             {% endif %}

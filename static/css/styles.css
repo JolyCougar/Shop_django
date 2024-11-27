@@ -410,27 +410,71 @@ button.prev-slide:hover, button.next-slide:hover {
 
 /* Стили для фиксированного меню */
 /* Общие стили для меню */
+
 .sticky-navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
     background-color: #6d3dab;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
-    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
+/* Стили для списка навигации */
 .nav-list {
     display: flex;
-    justify-content: flex-start; /* Элементы располагаются компактно */
     list-style: none;
     margin: 0;
-    padding: 0 10px; /* Отступы внутри списка */
-    gap: 15px; /* Расстояние между пунктами меню */
+    padding: 0;
+    gap: 15px;
+    flex: 1;
 }
+
+/* Контейнер для кнопок */
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Стили для кнопок */
+.nav-buttons a {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+.nav-buttons a:hover {
+    background-color: var(--hover-color);
+}
+
+/* Скрываем кнопки по умолчанию */
+.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+/* Показываем кнопки при скролле */
+.nav-buttons.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+
 
 .nav-list li {
     position: relative; /* Для выпадающего меню */
+    flex: 0 1 auto;
 }
 
 .nav-list a,
@@ -485,15 +529,6 @@ button.prev-slide:hover, button.next-slide:hover {
 /* Показываем меню при наведении */
 .dropdown:hover .dropdown-menu {
     display: block; /* Показывать выпадающее меню */
-}
-
-/* Если в списке всего несколько пунктов */
-.nav-list {
-    justify-content: flex-start; /* Элементы выравниваются по левому краю */
-}
-
-.nav-list li {
-    flex: 0 1 auto; /* Компактное размещение */
 }
 
 /* Адаптивность */
@@ -979,3 +1014,5 @@ button.prev-slide:hover, button.next-slide:hover {
     padding: 5px; /* Установите внутренние отступы */
     font-size: 14px; /* Установите размер шрифта */
 }
+
+
