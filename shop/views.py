@@ -2,16 +2,22 @@ import logging
 
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from .models import Product, Order, Cart, CartItem, OrderItem
+from .models import Product, Order, Cart, CartItem, OrderItem, Marketing
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, TemplateView, CreateView
 
 log = logging.getLogger(__name__)
 
 
-class MainPage(TemplateView):
+class MainPage(ListView):
+    model = Marketing
     template_name = "shop/main.html"
+    context_object_name = "marketing"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['popular_products'] = Product.objects.all()[:5]
+        return context
 
 class ProductListView(ListView):
     model = Product

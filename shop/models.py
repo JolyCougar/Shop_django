@@ -27,6 +27,10 @@ class ProductPathGenerator:
     def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
         return f"products/product_{instance.product.pk}/images/{filename}"
 
+    @staticmethod
+    def marketing_images_directory_path(instance: "Marketing", filename:str) -> str:
+        return f"marketing/images/{filename}"
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100, db_index=True)
@@ -104,3 +108,9 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f'{self.product.name} (x{self.quantity})'
+
+
+
+class Marketing(models.Model):
+    image = models.ImageField(upload_to=ProductPathGenerator.marketing_images_directory_path)
+    description = models.CharField(max_length=200, null=False, blank=True)

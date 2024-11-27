@@ -20,7 +20,11 @@
     
     <div class="nav-buttons hidden">
         <a href="{% url 'shop:cart_view' %}" class="cart-button">Корзина</a>
-        <a href="#" class="profile-button">Профиль</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'account:profile' user.pk %}" class="profile-button">{{ user.username }}</a>
+        {% else %}
+        <a href="{% url 'account:login' %}" class="profile-button">Войти</a>
+        {% endif %}
     </div>
     
     

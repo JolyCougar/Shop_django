@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from .models import Product, ProductImage, Order, Category, Manufacturer, OrderItem
+from .models import Product, ProductImage, Order, Category, Manufacturer, OrderItem, Marketing
 
 
 class ProductImageInline(admin.StackedInline):
@@ -79,6 +79,9 @@ class OrderAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = "name",
 
+@admin.register(Marketing)
+class MarketingAdmin(admin.ModelAdmin):
+    model = Marketing
 
 @admin.register(Manufacturer)
 class Manufacturer(admin.ModelAdmin):

@@ -1,22 +1,13 @@
 <section class="categories-slider">
     <div class="slider-container">
         <!-- Слайды -->
-        <div class="slide" data-link="https://example.com/product1">
-            <img src="image1.jpg" alt="Product 1">
-            <div class="slide-caption">Акция на товар 1</div>
-        </div>
-        <div class="slide" data-link="https://example.com/product2">
-            <img src="image2.jpg" alt="Product 2">
-            <div class="slide-caption">Скидки на товар 2</div>
-        </div>
-        <div class="slide" data-link="https://example.com/product3">
-            <img src="image3.jpg" alt="Product 3">
-            <div class="slide-caption">Новинка — товар 3</div>
-        </div>
-        <div class="slide" data-link="https://example.com/product4">
-            <img src="image4.jpg" alt="Product 4">
-            <div class="slide-caption">Акция на товар 4</div>
-        </div>
+        {% for slide in marketing %}
+            <div class="slide" data-link="https://example.com/product1">
+                <img src="{{ slide.image.url }}" alt="{{ slide.image.name }}">
+                <div class="slide-caption">{{ slide.description }}</div>
+            </div>
+        {% endfor %}
+        
         <!-- Навигация -->
         <button class="prev-slide">‹</button>
         <button class="next-slide">›</button>
