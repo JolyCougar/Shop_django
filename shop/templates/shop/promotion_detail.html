@@ -1,0 +1,20 @@
+{% extends 'include/base.html' %}
+
+
+{% block title %}
+    Профиль {{ user.username }}
+{% endblock %}
+
+
+{% block content %}
+    
+     
+    <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}">
+    <h1>{{ promotion.name }}</h1>
+    <p>{{ promotion.description }}</p>
+    
+{% endblock %}
+
+
+
+

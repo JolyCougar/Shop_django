@@ -19,6 +19,15 @@ class MainPage(ListView):
         context['popular_products'] = Product.objects.all()[:5]
         return context
 
+
+class PromotionDetailView(DetailView):
+    model = Marketing
+    template_name = 'shop/promotion_detail.html'  # Шаблон для страницы акции
+    slug_field = 'url'  # Поле, по которому будет осуществляться поиск
+    slug_url_kwarg = 'slug'  # Имя параметра в URL
+    context_object_name = "promotion"
+
+
 class ProductListView(ListView):
     model = Product
     template_name = "shop/product_list.html"
@@ -28,7 +37,6 @@ class ProductListView(ListView):
 class ProductDetailView(DetailView):
     model = Product
     template_name = "shop/product_detail.html"
-
 
 
 class AddToCartView(View):
@@ -110,7 +118,6 @@ class CartItemDeleteView(View):
 
         # Возвращаем JSON-ответ
         return JsonResponse({'success': True, 'message': 'Item removed from cart.'})
-
 
 
 class OrdersListView(ListView):
