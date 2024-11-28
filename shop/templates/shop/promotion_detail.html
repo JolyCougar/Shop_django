@@ -1,20 +1,28 @@
 {% extends 'include/base.html' %}
 
-
 {% block title %}
-    Профиль {{ user.username }}
+    {{ promotion.name }}
 {% endblock %}
-
 
 {% block content %}
-    
-     
-    <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}">
-    <h1>{{ promotion.name }}</h1>
-    <p>{{ promotion.description }}</p>
-    
+    <div class="promotion-container">
+        <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}" class="promotion-image">
+        <div class="promotion-details">
+            <h1 class="promotion-title">{{ promotion.name }}</h1>
+            <p class="promotion-description">{{ promotion.description }}</p>
+        </div>
+    </div>
+    {% if promotion.products.exists %}
+        <h2 class="section-title">Товары, участвующие в акции:</h2>
+        <div class="product-grid">
+            {% for product in promotion.products.all %}
+                <div class="product-card">
+                    <img src="{{ product.preview.url }}" alt="{{ product.name }}" class="product-image">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">Цена: {{ product.price }} ₽</p>
+                    <a href="{% url 'shop:product-detail' product.id %}" class="btn btn-primary">Подробнее</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
-
-
-
-

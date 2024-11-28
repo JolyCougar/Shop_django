@@ -999,4 +999,103 @@ button.next-slide {
     font-size: 14px; /* Установите размер шрифта */
 }
 
+.promotion-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.promotion-image {
+    max-width: 100%; /* Масштабируем изображение по ширине контейнера */
+    border-radius: 10px; /* Радиус для скругления углов */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Добавляем тень */
+}
+
+.promotion-details {
+    margin-top: 15px; /* Отступ сверху от изображения */
+}
+
+.promotion-title {
+    font-size: 24px;
+    color: var(--primary-color); /* Цвет заголовка */
+    margin-bottom: 10px; /* Отступ до описания */
+}
+
+.promotion-description {
+    font-size: 16px;
+    color: var(--text-color); /* Цвет описания */
+    line-height: 1.6; /* Высота строки для лучшей читаемости */
+    max-width: 600px; /* Ограничиваем ширину описания */
+}
+
+.section-title {
+    font-size: 24px;
+    text-align: center;
+    margin: 40px 0 20px;
+    color: var(--secondary-color);
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px var(--card-hover-color);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.product-name {
+    font-size: 18px;
+    color: var(--text-color);
+    margin: 10px 0;
+}
+
+.product-price {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background: var(--secondary-color);
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background: var(--hover-color);
+    transform: scale(1.05);
+}
+
+.no-products {
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+    margin-top: 20px;
+}
 
