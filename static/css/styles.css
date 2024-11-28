@@ -331,54 +331,75 @@ footer {
 
 .categories-slider {
     position: relative;
-    max-width: 100%;
-    overflow: hidden;
+    overflow: hidden; /* Скрывает части слайдов, выходящие за пределы контейнера */
+    width: 100%; /* Ширина слайдера */
+    max-width: 1200px; /* Ограничиваем максимальную ширину */
+    margin: 0 auto; /* Центрируем слайдер */
 }
+
 
 .slider-container {
     display: flex;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.5s ease-in-out; /* Плавная анимация */
+    width: 100%; /* Устанавливаем ширину контейнера */
 }
 
 .slide {
-    min-width: 100%;
-    box-sizing: border-box;
+    flex: 0 0 100%; /* Каждый слайд занимает 100% ширины контейнера */
+    text-align: center;
     position: relative;
 }
 
 .slide img {
-    width: 100%;
-    height: auto;
-    display: block;
+    width: 100%; /* Изображение растягивается на ширину слайда */
+    height: auto; /* Сохраняем пропорции */
+    max-height: 400px; /* Ограничиваем высоту изображения */
+    object-fit: fill; /* Центрируем и обрезаем изображение по контейнеру */
+    border-radius: 10px; /* Слегка скругляем углы */
 }
 
 .slide-caption {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
     color: white;
-    padding: 5px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
 }
 
-button.prev-slide, button.next-slide {
+.prev-slide, .next-slide {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
-    padding: 10px;
-    font-size: 20px;
+    padding: 10px 15px;
     cursor: pointer;
+    border-radius: 50%;
+    z-index: 10; /* Поверх слайдов */
+    font-size: 18px;
+    outline: none;
 }
 
-button.prev-slide {
-    left: 10px;
+.prev-slide {
+    left: 10px; /* Отступ от левого края */
 }
 
-button.next-slide {
-    right: 10px;
+.next-slide {
+    right: 10px; /* Отступ от правого края */
+}
+
+.prev-slide:hover, .next-slide:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* Убираем кнопки с автофокусом после смены */
+button:focus {
+    outline: none;
 }
 
 

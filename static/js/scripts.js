@@ -5,15 +5,17 @@ const nextSlideBtn = document.querySelector('.next-slide');
 
 let currentIndex = 0;
 
-// Переключение слайдов
+// Показ слайда
 function showSlide(index) {
     if (index < 0) {
-        currentIndex = slides.length - 1; // Если на первом слайде, переходим к последнему
+        currentIndex = slides.length - 1; // Если текущий первый, перейти к последнему
     } else if (index >= slides.length) {
-        currentIndex = 0; // Если на последнем слайде, переходим к первому
+        currentIndex = 0; // Если текущий последний, перейти к первому
     } else {
         currentIndex = index;
     }
+
+    // Сдвиг слайдов
     sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
 }
 
@@ -21,10 +23,10 @@ function showSlide(index) {
 prevSlideBtn.addEventListener('click', () => showSlide(currentIndex - 1));
 nextSlideBtn.addEventListener('click', () => showSlide(currentIndex + 1));
 
-// Автоматическое переключение
+// Автоматическая смена
 setInterval(() => {
     showSlide(currentIndex + 1);
-}, 5000); // Смена каждые 5 секунд
+}, 5000);
 
 // Переход по клику на слайд
 slides.forEach(slide => {
