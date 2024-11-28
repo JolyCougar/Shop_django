@@ -4,66 +4,66 @@
 
 {% block content %}
 
-<div class="product-page container">
-    <!-- Галерея миниатюр -->
-    <div class="product-thumbnails">
-        {% for image in product.get_all_images %}
-        <img
-            src="{{ image.url }}"
-            alt="{{ product.name }} thumbnail"
-            class="thumbnail {% if image.is_preview %}is-preview{% endif %}"
-            width="100"
-            height="100"
-        />
-        {% endfor %}
-    </div>
+    <div class="product-page container">
+        <!-- Галерея миниатюр -->
+        <div class="product-thumbnails">
+            {% for image in product.get_all_images %}
+                <img
+                        src="{{ image.url }}"
+                        alt="{{ product.name }} thumbnail"
+                        class="thumbnail {% if image.is_preview %}is-preview{% endif %}"
+                        width="100"
+                        height="100"
+                />
+            {% endfor %}
+        </div>
 
-    <!-- Главное изображение -->
-    <div class="product-main-image">
-        <img src="{{ product.preview.url }}" alt="{{ product.name }}" id="main-image" />
-    </div>
+        <!-- Главное изображение -->
+        <div class="product-main-image">
+            <img src="{{ product.preview.url }}" alt="{{ product.name }}" id="main-image"/>
+        </div>
 
-    <!-- Детали продукта -->
-    <div class="product-details">
-        <h1>{{ product.name }}</h1>
-        <ul>
-            {{ product.attribute | safe }}
-        </ul>
-        <div class="price-block">
-            {% if product.discount > 0 %}
-            <p class="old-price">Старая цена: {{ product.price }} ₽</p>
-            {% endif %}
-            <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
-        
-             <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-add-to-cart">Добавить в корзину</button>
-    </form>
-        
+        <!-- Детали продукта -->
+        <div class="product-details">
+            <h1>{{ product.name }}</h1>
+            <ul>
+                {{ product.attribute | safe }}
+            </ul>
+            <div class="price-block">
+                {% if product.discount > 0 %}
+                    <p class="old-price">Старая цена: {{ product.price }} ₽</p>
+                {% endif %}
+                <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
+
+                <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-add-to-cart">Добавить в корзину</button>
+                </form>
+
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Описание продукта -->
-<div class="description">
-    <h2>Описание товара</h2>
-    <p>{{ product.description }}</p>
-</div>
+    <!-- Описание продукта -->
+    <div class="description">
+        <h2>Описание товара</h2>
+        <p>{{ product.description }}</p>
+    </div>
 
-<script>
-    document.querySelectorAll('.thumbnail').forEach((thumbnail) => {
-        thumbnail.addEventListener('click', function () {
-            const mainImage = document.getElementById('main-image');
-            mainImage.src = this.src;
+    <script>
+        document.querySelectorAll('.thumbnail').forEach((thumbnail) => {
+            thumbnail.addEventListener('click', function () {
+                const mainImage = document.getElementById('main-image');
+                mainImage.src = this.src;
 
-            document
-                .querySelectorAll('.thumbnail')
-                .forEach((img) => img.classList.remove('is-preview'));
+                document
+                    .querySelectorAll('.thumbnail')
+                    .forEach((img) => img.classList.remove('is-preview'));
 
-            this.classList.add('is-preview');
+                this.classList.add('is-preview');
+            });
         });
-    });
-</script>
+    </script>
 
 {% endblock %}
 

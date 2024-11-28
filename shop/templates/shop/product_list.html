@@ -7,18 +7,26 @@
 {% block content %}
     <div class="products">
         <h2>Все товары:</h2>
-    <div class="product-list">
-        {% for product in product_list %}
-            <div class="product-card">
-                <a href="{% url 'shop:product-detail' product.id %}">
-                    <img src="{{ product.preview.url }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>{{ product.marketing_info }}</p>
-                </a>
-            </div>
-        {% endfor %}
+        <div class="product-list">
+            {% for product in product_list %}
+                <div class="product-card">
+                    <a href="{% url 'shop:product-detail' product.id %}">
+                        <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.marketing_info }}</p>
+                        {% if product.discount > 0 %}
+                            <p class="old-price">Старая цена: {{ product.price }} ₽</p>
+                        {% endif %}
+                        <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
+                        <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-add-to-cart">Добавить в корзину</button>
+                        </form>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-    </div>
-        
+
 
 {% endblock %}

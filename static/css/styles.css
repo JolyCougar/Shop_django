@@ -1008,11 +1008,6 @@ button:focus {
     background-color: #f1f1f1; /* Цвет при наведении */
 }
 
-.product-image {
-    width: 50px; /* Установите ширину изображения */
-    height: auto; /* Автоматическая высота */
-    margin-right: 10px; /* Отступ между изображением и текстом */
-}
 
 .quantity {
     width: 50px; /* Установите желаемую ширину */
@@ -1077,12 +1072,6 @@ button:focus {
     box-shadow: 0 4px 10px var(--card-hover-color);
 }
 
-.product-image {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
 
 .product-name {
     font-size: 18px;

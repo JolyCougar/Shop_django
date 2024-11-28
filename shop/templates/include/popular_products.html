@@ -3,13 +3,17 @@
         <h2>Самые популярные товары</h2>
         <div class="product-grid">
             {% for product in popular_products %}
-            <div class="product-card">
-                <a href="{% url 'shop:product-detail' product.id %}">
-                    <img src="{{ product.preview.url }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>{{ product.marketing_info }}</p>
-                </a>
-            </div>
+                <div class="product-card">
+                    <a href="{% url 'shop:product-detail' product.id %}">
+                        <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.marketing_info }}</p>
+                        {% if product.discount > 0 %}
+                            <p class="old-price">Старая цена: {{ product.price }} ₽</p>
+                        {% endif %}
+                        <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
+                    </a>
+                </div>
             {% endfor %}
         </div>
     </div>

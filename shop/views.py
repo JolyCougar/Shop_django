@@ -2,7 +2,7 @@ import logging
 
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from .models import Product, Order, Cart, CartItem, OrderItem, Marketing
+from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, TemplateView, CreateView
 
@@ -32,6 +32,23 @@ class ProductListView(ListView):
     model = Product
     template_name = "shop/product_list.html"
     queryset = Product.objects.filter(archived=False)
+
+
+class ProductByCategoryView(ListView):
+    model = Product
+    template_name = "shop/product_list.html"
+    context_object_name = "product_list"
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get('category_slug')
+        category = get_object_or_404(Category, name=category_slug)
+        return Product.objects.filter(category=category, archived=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_slug = self.kwargs.get('category_slug')
+        context['selected_category'] = get_object_or_404(Category, name=category_slug)
+        return context
 
 
 class ProductDetailView(DetailView):
