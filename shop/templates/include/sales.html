@@ -2,8 +2,9 @@
     <div class="slider-container">
         <!-- Слайды -->
         {% for slide in marketing %}
-            <div class="slide" data-link="{% url 'shop:promotion_detail' slide.url %}">
-                <img src="{{ slide.image.url }}" alt="{{ slide.image.name }}">
+            <div class="slide">
+                <a href="{% url 'shop:promotion_detail' slide.url %}">
+                    <img src="{{ slide.image.url }}" alt="{{ slide.image.name }}"></a>
                 <div class="slide-caption">{{ slide.description }}</div>
                 <!-- Навигация -->
                 <button class="prev-slide">‹</button>
