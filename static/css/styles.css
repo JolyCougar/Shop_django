@@ -379,7 +379,7 @@ footer {
     border: none;
     padding: 10px 15px;
     cursor: pointer;
-    border-radius: 50%;
+    border-radius: 20%;
     z-index: 10; /* Поверх слайдов */
     font-size: 18px;
     outline: none;

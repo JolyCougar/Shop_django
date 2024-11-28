@@ -1,39 +1,41 @@
-const slides = document.querySelectorAll('.slide');
-const sliderContainer = document.querySelector('.slider-container');
-const prevSlideBtn = document.querySelector('.prev-slide');
-const nextSlideBtn = document.querySelector('.next-slide');
+document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelectorAll('.categories-slider .slide');
+    const sliderContainer = document.querySelector('.categories-slider .slider-container');
 
-let currentIndex = 0;
+    let currentIndex = 0;
 
-// Показ слайда
-function showSlide(index) {
-    if (index < 0) {
-        currentIndex = slides.length - 1; // Если текущий первый, перейти к последнему
-    } else if (index >= slides.length) {
-        currentIndex = 0; // Если текущий последний, перейти к первому
-    } else {
-        currentIndex = index;
+    // Функция для показа слайда
+    function showSlide(index) {
+        if (index < 0) {
+            currentIndex = slides.length - 1;
+        } else if (index >= slides.length) {
+            currentIndex = 0;
+        } else {
+            currentIndex = index;
+        }
+
+        sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
 
-    // Сдвиг слайдов
-    sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
-}
+    // Обработчики для кнопок "Prev" и "Next" на каждом слайде
+    slides.forEach((slide, index) => {
+        const prevButton = slide.querySelector('.prev-slide');
+        const nextButton = slide.querySelector('.next-slide');
 
-// Кнопки навигации
-prevSlideBtn.addEventListener('click', () => showSlide(currentIndex - 1));
-nextSlideBtn.addEventListener('click', () => showSlide(currentIndex + 1));
+        prevButton.addEventListener('click', () => {
+            showSlide(currentIndex - 1);
+        });
 
-// Автоматическая смена
-setInterval(() => {
-    showSlide(currentIndex + 1);
-}, 5000);
-
-// Переход по клику на слайд
-slides.forEach(slide => {
-    slide.addEventListener('click', () => {
-        const link = slide.getAttribute('data-link');
-        if (link) {
-            window.location.href = link;
-        }
+        nextButton.addEventListener('click', () => {
+            showSlide(currentIndex + 1);
+        });
     });
+
+    // Автоматическое переключение слайдов каждые 5 секунд
+    setInterval(() => {
+        showSlide(currentIndex + 1);
+    }, 5000);
+
+    // Показать первый слайд при загрузке страницы
+    showSlide(currentIndex);
 });
