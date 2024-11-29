@@ -16,15 +16,21 @@ class MainPage(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['popular_products'] = Product.objects.all()[:5]
+        context["popular_products"] = Product.objects.all()[:5]
         return context
 
 
+class PromotionListView(ListView):
+    model = Marketing
+    template_name = "shop/promotion_list.html"
+    context_object_name = "promotions"
+    queryset = Marketing.objects.filter(archived=False)
+
 class PromotionDetailView(DetailView):
     model = Marketing
-    template_name = 'shop/promotion_detail.html'  # Шаблон для страницы акции
-    slug_field = 'url'  # Поле, по которому будет осуществляться поиск
-    slug_url_kwarg = 'slug'  # Имя параметра в URL
+    template_name = "shop/promotion_detail.html"
+    slug_field = "url"
+    slug_url_kwarg = "slug"
     context_object_name = "promotion"
 
 
@@ -40,14 +46,14 @@ class ProductByCategoryView(ListView):
     context_object_name = "product_list"
 
     def get_queryset(self):
-        category_slug = self.kwargs.get('category_slug')
+        category_slug = self.kwargs.get("category_slug")
         category = get_object_or_404(Category, name=category_slug)
         return Product.objects.filter(category=category, archived=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_slug = self.kwargs.get('category_slug')
-        context['selected_category'] = get_object_or_404(Category, name=category_slug)
+        category_slug = self.kwargs.get("category_slug")
+        context["selected_category"] = get_object_or_404(Category, name=category_slug)
         return context
 
 
@@ -67,13 +73,13 @@ class AddToCartView(View):
             cart_item.quantity += 1
             cart_item.save()
 
-        return redirect('shop:cart_view')
+        return redirect("shop:cart_view")
 
 
 class CartView(ListView):
     model = Cart
-    template_name = 'shop/cart.html'
-    context_object_name = 'cart_items'
+    template_name = "shop/cart.html"
+    context_object_name = "cart_items"
 
     def get_queryset(self):
         # Получаем корзину текущего пользователя
@@ -84,15 +90,15 @@ class CartView(ListView):
         context = super().get_context_data(**kwargs)
         cart = Cart.objects.get(user=self.request.user)
         total_price = sum(item.product.price * item.quantity for item in cart.cartitem_set.all())
-        context['total_price'] = total_price
+        context["total_price"] = total_price
         return context
 
 
 class CreateOrderView(CreateView):
     model = Order
-    template_name = 'shop/order_form.html'  # Создайте этот шаблон для ввода адреса доставки
-    fields = ['delivery_address']
-    success_url = reverse_lazy('shopp:order_success')
+    template_name = "shop/order_form.html"
+    fields = ["delivery_address"]
+    success_url = reverse_lazy("shopp:order_success")
 
     def form_valid(self, form):
         # Создаем заказ
@@ -120,7 +126,7 @@ class CreateOrderView(CreateView):
 
 class OrderSuccessView(View):
     def get(self, request):
-        return render(request, 'shop/order_success.html')
+        return render(request, "shop/order_success.html")
 
 
 class CartItemDeleteView(View):
@@ -128,13 +134,13 @@ class CartItemDeleteView(View):
         # Получаем корзину пользователя
         cart = get_object_or_404(Cart, user=request.user)
         # Получаем элемент корзины, который нужно удалить
-        cart_item = get_object_or_404(CartItem, cart=cart, id=self.kwargs['pk'])
+        cart_item = get_object_or_404(CartItem, cart=cart, id=self.kwargs["pk"])
 
         # Удаляем элемент из корзины
         cart_item.delete()
 
         # Возвращаем JSON-ответ
-        return JsonResponse({'success': True, 'message': 'Item removed from cart.'})
+        return JsonResponse({"success": True, "message": "Item removed from cart."})
 
 
 class OrdersListView(ListView):

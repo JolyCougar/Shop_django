@@ -4,46 +4,41 @@
             <a href="{% url 'shop:product-list' %}"> <span class="dropdown-1">Все товары</span></a>
             <ul class="dropdown-menu">
                 {% for category in categories %}
-                <li>
-                <a href="{% url 'shop:category_filter' category_slug=category.name %}">
-                    {{ category.name }}
-                </a></li>
+                    <li>
+                        <a href="{% url 'shop:category_filter' category_slug=category.name %}">
+                            {{ category.name }}
+                        </a></li>
                 {% empty %}
-            <li>Нет категорий</li>
-        {% endfor %}
+                    <li>Нет категорий</li>
+                {% endfor %}
             </ul>
         </li>
-        <li><a href="#">Скидки</a></li>
+        <li><a href="{% url 'shop:promotion_list' %}">Акции</a></li>
         <li><a href="#">Новинки</a></li>
-        <li><a href="#">Product1</a></li>
-        <li><a href="#">Product2</a></li>
-        <li><a href="#">Product3</a></li>
-        <li><a href="#">Product4</a></li>
     </ul>
 
     <div class="nav-buttons hidden">
         <a href="{% url 'shop:cart_view' %}" class="cart-button">Корзина</a>
         {% if user.is_authenticated %}
-        <a href="{% url 'account:profile' user.pk %}" class="profile-button">{{ user.username }}</a>
+            <a href="{% url 'account:profile' user.pk %}" class="profile-button">{{ user.username }}</a>
         {% else %}
-        <a href="{% url 'account:login' %}" class="profile-button">Войти</a>
+            <a href="{% url 'account:login' %}" class="profile-button">Войти</a>
         {% endif %}
     </div>
 
 
-
     <script>
-    // Найти контейнер с кнопками
-    const navButtons = document.querySelector('.nav-buttons');
+        // Найти контейнер с кнопками
+        const navButtons = document.querySelector('.nav-buttons');
 
-    // Добавить событие на прокрутку страницы
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) { // Если прокрутка больше 100px
-            navButtons.classList.add('visible');
-        } else {
-            navButtons.classList.remove('visible');
-        }
-    });
-</script>
+        // Добавить событие на прокрутку страницы
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) { // Если прокрутка больше 100px
+                navButtons.classList.add('visible');
+            } else {
+                navButtons.classList.remove('visible');
+            }
+        });
+    </script>
 
 </nav>

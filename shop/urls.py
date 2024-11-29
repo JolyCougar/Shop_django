@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (ProductListView, ProductDetailView, AddToCartView,
                     CartView, OrdersListView, OrderDetailView, MainPage,
                     CreateOrderView, OrderSuccessView, CartItemDeleteView,
-                    PromotionDetailView, ProductByCategoryView)
+                    PromotionDetailView, ProductByCategoryView, PromotionListView)
 
 app_name = 'shop'
 
@@ -18,6 +18,7 @@ urlpatterns = [
     path('create_order/', CreateOrderView.as_view(), name='create_order'),
     path('order_success/', OrderSuccessView.as_view(), name='order_success'),
     path('cart/remove/<int:pk>/', CartItemDeleteView.as_view(), name='remove_from_cart'),
+    path('promotion/', PromotionListView.as_view(), name='promotion_list'),
     path('promotion/<slug:slug>/', PromotionDetailView.as_view(), name='promotion_detail'),
 
 ]

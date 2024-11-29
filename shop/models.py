@@ -114,11 +114,13 @@ class Marketing(models.Model):
     name = models.CharField("name", max_length=100)
     image = models.ImageField(upload_to=ProductPathGenerator.marketing_images_directory_path)
     description = models.CharField(max_length=200, null=False, blank=True)
+    description_full = models.TextField(null=False, blank=True, db_index=True)
     url = models.SlugField(max_length=130, unique=True)
     products = models.ManyToManyField(Product, related_name='promotions', blank=True)
+    archived = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.description
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.url:

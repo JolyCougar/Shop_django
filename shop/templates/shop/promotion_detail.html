@@ -9,7 +9,8 @@
         <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}" class="promotion-image">
         <div class="promotion-details">
             <h1 class="promotion-title">{{ promotion.name }}</h1>
-            <p class="promotion-description">{{ promotion.description }}</p>
+            <p class="promotion-description">{{ promotion.description | safe }}</p>
+            <p class="promotion-description">{{ promotion.description_full | safe }}</p>
         </div>
     </div>
     {% if promotion.products.exists %}
