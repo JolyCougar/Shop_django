@@ -1,5 +1,5 @@
 import logging
-
+from django.utils.timezone import now
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category
@@ -26,6 +26,7 @@ class PromotionListView(ListView):
     template_name = "shop/promotion_list.html"
     context_object_name = "promotions"
     queryset = Marketing.objects.filter(archived=False)
+
 
 class PromotionDetailView(DetailView):
     model = Marketing
@@ -56,6 +57,15 @@ class ProductByCategoryView(ListView):
         category_slug = self.kwargs.get("category_slug")
         context["selected_category"] = get_object_or_404(Category, name=category_slug)
         return context
+
+
+class ProductsNewView(ListView):
+    model = Product
+    template_name = 'shop/product_list.html'
+    context_object_name = "product_list"
+
+    def get_queryset(self):
+        return Product.objects.filter(new=True, archived=False)
 
 
 class ProductDetailView(DetailView):

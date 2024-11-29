@@ -43,6 +43,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     discount = models.SmallIntegerField(default=0)
+    new = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
     stock = models.PositiveIntegerField(default=0)
     attribute = models.TextField(null=False, blank=True, db_index=True)

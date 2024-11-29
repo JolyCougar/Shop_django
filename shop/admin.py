@@ -50,7 +50,7 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": ("preview",),
         }),
         ("Extra options", {
-            "fields": ("archived",),
+            "fields": ("archived", "new"),
             "classes": ("collapse",),
             "description": "Extra options. Field 'archived' is for soft delete",
         })
