@@ -1,5 +1,6 @@
 import logging
-from django.utils.timezone import now
+from django_filters.views import FilterView
+from .filters import ProductFilter
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category
@@ -36,10 +37,12 @@ class PromotionDetailView(DetailView):
     context_object_name = "promotion"
 
 
-class ProductListView(ListView):
+class ProductListView(FilterView):
     model = Product
+    filterset_class = ProductFilter
     template_name = "shop/product_list.html"
     queryset = Product.objects.filter(archived=False)
+
 
 
 class ProductByCategoryView(ListView):
