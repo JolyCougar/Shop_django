@@ -13,6 +13,7 @@ class MainPage(ListView):
     model = Marketing
     template_name = "shop/main.html"
     context_object_name = "marketing"
+    queryset = Marketing.objects.filter(archived=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

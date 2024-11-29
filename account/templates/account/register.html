@@ -1,39 +1,40 @@
 {% extends 'include/base.html' %}
 {% load add_class %}
 {% block title %}
-	Register
+    Register
 {% endblock %}
 
 {% block content %}
-	 <div class="container">
+    <div class="container">
         <h2>Регистрация</h2>
+        {{ form.password1.errors }}
+        {{ form.password2.errors }}
+        {{ form.email.errors }}
+        {{ form.agreement_accepted.errors }}
+        {{ form.username.errors }}
         <form method="post" enctype="multipart/form-data" class="registration-form">
             {% csrf_token %}
             {{ form.non_field_errors }}
             <div class="form-group">
                 <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
                 {{ form.username|add_class:"form-control" }}
-                {{ form.username.errors }}
             </div>
             <div class="form-group">
                 <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email|add_class:"form-control" }}
-                {{ form.email.errors }}
             </div>
             <div class="form-group">
                 <label for="{{ form.password1.id_for_label }}">Пароль</label>
                 {{ form.password1|add_class:"form-control" }}
-                {{ form.password1.errors }}
             </div>
             <div class="form-group">
                 <label for="{{ form.password2.id_for_label }}">Подтверждение пароля</label>
                 {{ form.password2|add_class:"form-control" }}
-                {{ form.password2.errors }}
             </div>
             <div class="form-group form-check">
                 {{ form.agreement_accepted|add_class:"form-check-input" }}
-                <label for="{{ form.agreement_accepted.id_for_label }}" class="form-check-label">Я согласен с условиями</label>
-                {{ form.agreement_accepted.errors }}
+                <label for="{{ form.agreement_accepted.id_for_label }}" class="form-check-label">Я согласен с
+                    условиями</label>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn">Зарегистрироваться</button>

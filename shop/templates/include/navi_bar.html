@@ -23,6 +23,7 @@
             <a href="{% url 'account:profile' user.pk %}" class="profile-button">{{ user.username }}</a>
         {% else %}
             <a href="{% url 'account:login' %}" class="profile-button">Войти</a>
+            <a href="{% url 'account:registration' %}" class="login" title="Войти">Регистрация</a>
         {% endif %}
     </div>
 
