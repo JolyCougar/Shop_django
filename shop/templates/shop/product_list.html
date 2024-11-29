@@ -12,6 +12,9 @@
                 <div class="product-card">
                     <a href="{% url 'shop:product-detail' product.id %}">
                         <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                        {% if product.new %}
+                            <span style="color: green; font-weight: bold;">Новинка!</span>
+                        {% endif %}
                         <h3>{{ product.name }}</h3>
                         <p>{{ product.marketing_info }}</p>
                         {% if product.discount > 0 %}
