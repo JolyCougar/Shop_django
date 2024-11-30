@@ -16,15 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.flatpages import views as flatpage_views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),
-    path('account/', include('account.urls'))
+    path('account/', include('account.urls')),
+    path('about-us/', flatpage_views.flatpage, {'url': '/about-us/'}, name='about'),
+    path('contact/', flatpage_views.flatpage, {'url': '/contact/'}, name='contact'),
+    path('delivery/', flatpage_views.flatpage, {'url': '/delivery/'}, name='delivery'),
+    path('warranty/', flatpage_views.flatpage, {'url': '/warranty/'}, name='warranty'),
+    path('trade_in/', flatpage_views.flatpage, {'url': '/trade_in/'}, name='trade_in'),
 ]
-
 
 if settings.DEBUG:
     urlpatterns.extend(
