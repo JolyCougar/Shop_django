@@ -44,10 +44,10 @@ class ProductListView(FilterView):
     queryset = Product.objects.filter(archived=False)
 
 
-
-class ProductByCategoryView(ListView):
+class ProductByCategoryView(FilterView):
     model = Product
     template_name = "shop/product_list.html"
+    filterset_class = ProductFilter
     context_object_name = "product_list"
 
     def get_queryset(self):
@@ -62,9 +62,10 @@ class ProductByCategoryView(ListView):
         return context
 
 
-class ProductsNewView(ListView):
+class ProductsNewView(FilterView):
     model = Product
     template_name = 'shop/product_list.html'
+    filterset_class = ProductFilter
     context_object_name = "product_list"
 
     def get_queryset(self):
