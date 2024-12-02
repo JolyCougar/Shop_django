@@ -83,6 +83,7 @@ class Order(models.Model):
     status = models.CharField(max_length=50, default='В обработке')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     promo = models.CharField(max_length=20, null=True, blank=True)
+    complete = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Order #{self.id} by {self.user.username}'

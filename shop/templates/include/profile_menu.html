@@ -10,9 +10,9 @@
     <div class="filter-item">
         <h3>Заказы</h3>
         <form>
-            <a href="{% url 'shop:orders_user' %}"> Заказы</a>
-            <a href="{% url 'shop:orders_user' %}"> Активные заказы</a>
-            <a href="{% url 'shop:orders_user' %}"> Выполненные заказы</a>
+            <a href="{% url 'shop:orders_user' 'all' %}"> Заказы</a>
+            <a href="{% url 'shop:orders_user' 'active' %}"> Активные заказы</a>
+            <a href="{% url 'shop:orders_user' 'complete' %}"> Выполненные заказы</a>
         </form>
     </div>
 </aside>

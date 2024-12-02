@@ -164,7 +164,13 @@ class OrdersListView(ListView):
     context_object_name = "orders"
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        filter_slug = self.kwargs.get("slug")
+        if filter_slug == "all":
+            return Order.objects.all()
+        elif filter_slug == "complete":
+            return Order.objects.filter(complete=True)
+        else:
+            return Order.objects.filter(complete=False)
 
 
 class OrderDetailView(DetailView):
