@@ -1233,3 +1233,6 @@ button:focus {
     background: #d6d6d6;
 }
 
+.text-danger {
+    color: red;
+}

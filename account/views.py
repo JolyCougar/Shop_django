@@ -1,8 +1,9 @@
 from django.views.generic import CreateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomPasswordChangeForm
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import PasswordChangeView
 from shopSite.settings import AUTH_USER_MODEL
 from .models import CustomUser
 import logging
@@ -34,3 +35,9 @@ class ProfileView(DetailView):
     model = CustomUser
     template_name = "account/profile.html"
     context_object_name = "user"
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = "account/password_change.html"
+    form_class = CustomPasswordChangeForm
+
