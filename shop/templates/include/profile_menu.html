@@ -3,7 +3,7 @@
     <div class="filter-item">
         <h3>Профиль</h3>
         <form>
-            <a href="{% url 'shop:orders_user' %}"> Изменить профиль</a>
+            <a href="{% url 'account:profile' user.pk %}"> Профиль</a>
             <a href="{% url 'account:change-password' %}"> Сменить пароль</a>
         </form>
     </div>
