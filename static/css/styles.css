@@ -1299,10 +1299,20 @@ label[for="avatarUpload"]:hover {
 .btn-danger {
     margin-left: 5px;
     height: auto;
-    width: 100px;
+    width: 6rem;
 }
 
 .fix {
     height: auto;
-    width: 370px;
+    width: 23rem;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Размещает кнопки по краям */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+.button-container a {
+    margin-right: auto; /* Отодвигает кнопку "Назад к профилю" влево */
 }
