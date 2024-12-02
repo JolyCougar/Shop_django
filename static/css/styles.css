@@ -878,21 +878,6 @@ button:focus {
     margin-right: 10px;
 }
 
-.btn {
-    background-color: var(--secondary-color);
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s;
-    width: 100%;
-}
-
-.btn:hover {
-    background-color: var(--hover-color);
-}
 
 .logout-link {
     background: none;
@@ -1089,6 +1074,7 @@ button:focus {
 .btn {
     display: inline-block;
     padding: 10px 20px;
+    margin-top: 5px;
     font-size: 14px;
     color: #fff;
     background: var(--secondary-color);
@@ -1286,4 +1272,37 @@ button:focus {
 
 .btn-edit-profile:hover {
     background: var(--hover-color);
+}
+
+/* Скрытие стандартного input */
+#avatarUpload {
+    display: none;
+}
+
+/* Стиль для метки (label) */
+label[for="avatarUpload"] {
+    cursor: pointer;
+    padding: 6px 12px;
+    margin-left: 5px;
+    background-color: #7e059d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+label[for="avatarUpload"]:hover {
+    background-color: #00bfa5;
+}
+
+.btn-danger {
+    margin-left: 5px;
+    height: auto;
+    width: 100px;
+}
+
+.fix {
+    height: auto;
+    width: 370px;
 }

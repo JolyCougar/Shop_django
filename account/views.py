@@ -1,14 +1,14 @@
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomPasswordChangeForm
+from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
-from shopSite.settings import AUTH_USER_MODEL
 from .models import CustomUser
 import logging
 
 log = logging.getLogger(__name__)
+
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
@@ -41,3 +41,14 @@ class CustomPasswordChangeView(PasswordChangeView):
     template_name = "account/password_change.html"
     form_class = CustomPasswordChangeForm
 
+
+class ChangeProfileInfoView(UpdateView):
+    model = CustomUser
+    form_class = ProfileUpdateForm
+    template_name = 'account/change_info.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('account:profile', kwargs={'pk': self.request.user.pk})

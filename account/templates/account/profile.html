@@ -9,17 +9,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="profile-container">
-    <div class="avatar-section">
-        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar">
+    <div class="profile-container">
+        <div class="avatar-section">
+            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar">
+        </div>
+        <div class="profile-details">
+            <h2>Пользователь: {{ user.username }}</h2>
+            <p><strong>Имя:</strong> {{ user.first_name }}</p>
+            <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
+            <p><strong>E-mail:</strong> {{ user.email }}</p>
+            <p><strong>О себе:</strong> {{ user.bio }}</p>
+            <a href="{% url 'account:update-profile' %}">
+                <button class="btn-edit-profile">Изменить профиль</button>
+            </a>
+        </div>
     </div>
-    <div class="profile-details">
-        <h2>Пользователь: {{ user.username }}</h2>
-        <p><strong>Имя:</strong> {{ user.first_name }}</p>
-        <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
-        <p><strong>E-mail:</strong> {{ user.email }}</p>
-        <p><strong>О себе:</strong> {{ user.bio }}</p>
-        <button class="btn-edit-profile">Изменить профиль</button>
-    </div>
-</div>
 {% endblock %}

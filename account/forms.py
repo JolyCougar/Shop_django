@@ -20,3 +20,12 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         self.fields['old_password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Current Password'})
         self.fields['new_password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'New Password'})
         self.fields['new_password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm Password'})
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["first_name", "last_name", "email", "bio", "avatar"]
+        widgets = {
+            "bio": forms.Textarea(attrs={"rows": 5}),
+        }
