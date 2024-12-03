@@ -1,0 +1,117 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Сменить информацию {{ user.username }}
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h2>Обновить профиль</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Аватар -->
+        <div class="form-group form-avatar">
+            <label for="{{ form.avatar.id_for_label }}">Аватар</label>
+            {% if user.avatar %}
+                <!-- Отображаем текущий аватар -->
+                <img src="{{ user.avatar.url }}" alt="Аватар" class="img-thumbnail"
+                     style="width: 120px; height: 120px; object-fit: cover;">
+            {% else %}
+                <p id="no-avatar-message">Аватар не установлен</p>
+            {% endif %}
+
+            <img id="avatar-preview" alt="Предварительный просмотр"
+                 style="display: none; width: 120px; height: 120px; object-fit: cover;">
+            <!-- Кнопка очистки аватара -->
+            <button type="button" class="btn btn-danger ml-3" id="clear-avatar-btn">Очистить</button>
+
+            <!-- Стилизация кнопки "Обзор" -->
+            <div class="fix">
+                <label for="avatarUpload" class="btn btn-primary ml-3">Обзор</label></div>
+            <!-- Поле для загрузки файла (скрыто) -->
+            <input type="file" name="avatar" id="avatarUpload" class="">
+        </div>
+
+        <!-- Имя -->
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">Имя</label>
+            {{ form.first_name |add_class:"form-control" }}
+        </div>
+
+        <!-- Фамилия -->
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
+            {{ form.last_name |add_class:"form-control" }}
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">E-mail</label>
+            {{ form.email |add_class:"form-control" }}
+        </div>
+
+        <!-- О себе -->
+        <div class="form-group">
+            <label for="{{ form.bio.id_for_label }}">О себе</label>
+            {{ form.bio |add_class:"form-control" }}
+        </div>
+
+        <div class="button-container">
+            <a href="{% url 'account:profile' user.pk %}">
+                <button type="button" class="btn btn-secondary">Назад к профилю</button>
+            </a>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        </div>
+    </form>
+
+
+    <script>
+        // Обработчик события для загрузки файла
+        document.getElementById('avatarUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('avatar-preview');
+            const noAvatarMessage = document.getElementById('no-avatar-message');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    if (noAvatarMessage) {
+                        noAvatarMessage.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+        document.getElementById('clear-avatar-btn').addEventListener('click', function () {
+            {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '{% url "account:clear_avatar" %}', true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            location.reload();
+                        } else {
+                            alert('Произошла ошибка при удалении аватара. Пожалуйста, попробуйте еще раз.');
+                        }
+                    }
+                };
+
+                xhr.send();
+            }
+        });
+    </script>
+
+{% endblock %}
+

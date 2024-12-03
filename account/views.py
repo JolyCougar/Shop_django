@@ -1,4 +1,6 @@
 from django.views.generic import CreateView, DetailView, UpdateView
+from django.views import View
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm
@@ -45,10 +47,21 @@ class CustomPasswordChangeView(PasswordChangeView):
 class ChangeProfileInfoView(UpdateView):
     model = CustomUser
     form_class = ProfileUpdateForm
-    template_name = 'account/change_info.html'
+    template_name = 'account/update_profile.html'
 
     def get_object(self, queryset=None):
         return self.request.user
 
     def get_success_url(self):
         return reverse_lazy('account:profile', kwargs={'pk': self.request.user.pk})
+
+
+
+class ClearAvatarView(View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if user.avatar:
+            user.avatar.delete()
+        user.avatar = None
+        user.save()
+        return JsonResponse({'success': True})

@@ -11,7 +11,12 @@
 {% block content %}
     <div class="profile-container">
         <div class="avatar-section">
-            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="avatar">
+            {% else %}
+                <p>Аватар не установлен</p>
+            {% endif %}
+
         </div>
         <div class="profile-details">
             <h2>Пользователь: {{ user.username }}</h2>
