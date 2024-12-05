@@ -7,7 +7,7 @@
 
 
 {% block content %}
-    <div class="container">
+        <div class="container">
         <h1>Корзина</h1>
         {% if cart_items %}
             <table class="cart-table">
@@ -26,20 +26,18 @@
                 {% for item in cart_items %}
                     <tr data-item-id="{{ item.id }}" id="cart-item-{{ item.id }}">
                         <td>
-                            <a href="{% url 'shop:product-detail' item.product.id %}">
-                                <img src="{{ item.product.preview.url }}" alt="{{ item.product.name }}"
-                                     class="product-image">
-                                {{ item.product.name }}
+                            <a href="{% url 'shop:product-detail' item.id %}">
+                                <img src="{{ item.preview.url }}" alt="{{ item.name }}" class="product-image">
+                                {{ item.name }}
                             </a>
                         </td>
-                        <td>{{ item.product.description }}</td>
-                        <td>₽{{ item.product.price }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>₽{{ item.price }}</td>
                         <td>
-                            <input type="number" value="{{ item.quantity }}" min="1" class="quantity"
-                                   data-price="{{ item.product.discounted_price }}">
+                            <input type="number" value="1" min="1" class="quantity" data-price="{{ item.price }}">
                         </td>
-                        <td>{{ item.product.discount }}%</td>
-                        <td class="item-total">₽{{ item.product.price|multiply:item.quantity }}</td>
+                        <td>{{ item.discount }}%</td>
+                        <td class="item-total">₽{{ item.price|multiply:1 }}</td>
                         <td>
                             <button class="remove-from-cart" data-id="{{ item.id }}">Удалить</button>
                         </td>
@@ -60,71 +58,72 @@
             <p>Ваша корзина пуста.</p>
         {% endif %}
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Обработчик удаления товара из корзины
-            const removeButtons = document.querySelectorAll('.remove-from-cart');
-            removeButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const itemId = this.getAttribute('data-id');
-                    const cartItem = document.getElementById('cart-item-' + itemId);
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Обработчик удаления товара из корзины
+        const removeButtons = document.querySelectorAll('.remove-from-cart');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const itemId = this.getAttribute('data-id');
+                const cartItem = document.getElementById('cart-item-' + itemId);
 
-                    // Создаем AJAX-запрос
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/cart/remove/' + itemId + '/', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                // Создаем AJAX-запрос
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cart/remove/' + itemId + '/', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}'); // Убедитесь, что CSRF-токен доступен
 
-                    xhr.onload = function () {
-                        if (xhr.status === 200) {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                cartItem.remove();
-                                updateTotal();
-                            }
-                        } else {
-                            alert('Ошибка при удалении элемента: ' + xhr.statusText);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            cartItem.remove(); // Удаляем элемент из DOM
+                            updateTotal(); // Обновляем общую сумму
                         }
-                    };
-
-                    xhr.send();
-                });
-            });
-
-            // Обработчик изменения количества товара
-            const quantityInputs = document.querySelectorAll('.quantity');
-
-            quantityInputs.forEach(quantityInput => {
-                const pricePerItem = parseFloat(quantityInput.getAttribute('data-price'));
-                const itemTotalCell = quantityInput.closest('tr').querySelector('.item-total');
-                const totalPriceElement = document.querySelector('.total-price');
-
-                function updateTotal() {
-                    const quantity = parseInt(quantityInput.value);
-                    const itemTotal = pricePerItem * quantity;
-                    itemTotalCell.textContent = `₽${itemTotal.toFixed(2)}`;
-
-                    // Обновляем общую сумму
-                    let total = 0;
-                    document.querySelectorAll('.item-total').forEach(cell => {
-                        total += parseFloat(cell.textContent.replace('₽', ''));
-                    });
-                    totalPriceElement.textContent = `₽${total.toFixed(2)}`;
-                }
-
-                // Добавляем обработчик события input для обновления цены при вводе
-                quantityInput.addEventListener('input', function () {
-                    if (this.value < 1) {
-                        this.value = 1;
+                    } else {
+                        alert('Ошибка при удалении элемента: ' + xhr.statusText);
                     }
-                    updateTotal();
-                });
+                };
 
-                // Инициализируем итоговую сумму при загрузке страницы
-                updateTotal();
+                xhr.send();
             });
         });
-    </script>
+
+        // Обработчик изменения количества товара
+        const quantityInputs = document.querySelectorAll('.quantity');
+
+        quantityInputs.forEach(quantityInput => {
+            const pricePerItem = parseFloat(quantityInput.getAttribute('data-price'));
+            const itemTotalCell = quantityInput.closest('tr').querySelector('.item-total');
+            const totalPriceElement = document.querySelector('.total-price');
+
+            function updateTotal() {
+                const quantity = parseInt(quantityInput.value);
+                const itemTotal = pricePerItem * quantity;
+                itemTotalCell.textContent = `₽${itemTotal.toFixed(2)}`;
+
+                // Обновляем общую сумму
+                let total = 0;
+                document.querySelectorAll('.item-total').forEach(cell => {
+                    total += parseFloat(cell.textContent.replace('₽', ''));
+                });
+                totalPriceElement.textContent = `₽${total.toFixed(2)}`;
+            }
+
+            // Добавляем обработчик события input для обновления цены при вводе
+            quantityInput.addEventListener('input', function () {
+                if (this.value < 1) {
+                    this.value = 1; // Устанавливаем минимальное значение 1
+                }
+                updateTotal(); // Обновляем итоговую сумму
+            });
+
+            // Инициализируем итоговую сумму при загрузке страницы
+            updateTotal();
+        });
+    });
+</script>
+
 
 {% endblock %}
 

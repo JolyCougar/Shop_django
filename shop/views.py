@@ -80,15 +80,43 @@ class ProductDetailView(DetailView):
 class AddToCartView(View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)
 
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user)
+        else:
+            cart = request.session.get('cart', [])
+            if product_id not in cart:
+                cart.append(product_id)
+            request.session['cart'] = cart
+            print(cart,'add to cart')
 
-        if not created:
-            cart_item.quantity += 1
-            cart_item.save()
+        if request.user.is_authenticated:
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+            if not created:
+                cart_item.quantity += 1
+                cart_item.save()
 
         return redirect("shop:cart_view")
+
+
+class CartItemDeleteView(View):
+    def post(self, request, *args, **kwargs):
+        product_id = self.kwargs["pk"]
+
+        if request.user.is_authenticated:
+            cart = get_object_or_404(Cart, user=request.user)
+            cart_item = get_object_or_404(CartItem, cart=cart, product__id=product_id)
+            cart_item.delete()
+        else:
+            cart = request.session.get('cart', [])
+
+            if product_id in cart:
+                cart.remove(product_id)
+                request.session['cart'] = cart
+
+        return JsonResponse({"success": True, "message": "Item removed from cart."})
+
 
 
 class CartView(ListView):
@@ -97,15 +125,27 @@ class CartView(ListView):
     context_object_name = "cart_items"
 
     def get_queryset(self):
-        # Получаем корзину текущего пользователя
-        cart = Cart.objects.get(user=self.request.user)
-        return cart.cartitem_set.all()  # Возвращаем все элементы корзины
+        if self.request.user.is_authenticated:
+            cart = Cart.objects.get(user=self.request.user)
+            return cart.cartitem_set.all()
+        else:
+            cart_ids = self.request.session.get('cart', [])
+            return Product.objects.filter(id__in=cart_ids)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = Cart.objects.get(user=self.request.user)
-        total_price = sum(item.product.price * item.quantity for item in cart.cartitem_set.all())
+        total_price = 0
+
+        if self.request.user.is_authenticated:
+            cart = Cart.objects.get(user=self.request.user)
+            total_price = sum(item.product.price * item.quantity for item in cart.cartitem_set.all())
+        else:
+            cart_ids = self.request.session.get('cart', [])
+            products = Product.objects.filter(id__in=cart_ids)
+            total_price = sum(product.price for product in products)
+
         context["total_price"] = total_price
+        context["cart_items"] = products
         return context
 
 
@@ -142,20 +182,6 @@ class CreateOrderView(CreateView):
 class OrderSuccessView(View):
     def get(self, request):
         return render(request, "shop/order_success.html")
-
-
-class CartItemDeleteView(View):
-    def post(self, request, *args, **kwargs):
-        # Получаем корзину пользователя
-        cart = get_object_or_404(Cart, user=request.user)
-        # Получаем элемент корзины, который нужно удалить
-        cart_item = get_object_or_404(CartItem, cart=cart, id=self.kwargs["pk"])
-
-        # Удаляем элемент из корзины
-        cart_item.delete()
-
-        # Возвращаем JSON-ответ
-        return JsonResponse({"success": True, "message": "Item removed from cart."})
 
 
 class OrdersListView(ListView):
