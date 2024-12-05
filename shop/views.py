@@ -83,19 +83,24 @@ class AddToCartView(View):
 
         if request.user.is_authenticated:
             cart, created = Cart.objects.get_or_create(user=request.user)
-        else:
-            cart = request.session.get('cart', [])
-            if product_id not in cart:
-                cart.append(product_id)
-            request.session['cart'] = cart
-            print(cart,'add to cart')
-
-        if request.user.is_authenticated:
             cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
-            if not created:
+            if created:
+                cart_item.quantity = 1
+            else:
                 cart_item.quantity += 1
-                cart_item.save()
+
+            cart_item.save()
+        else:
+            cart = request.session.get('cart', {})
+            if not isinstance(cart, dict):
+                cart = {}
+
+            if str(product_id) in cart:
+                cart[str(product_id)] += 1
+            else:
+                cart[str(product_id)] = 1
+            request.session['cart'] = cart
 
         return redirect("shop:cart_view")
 
@@ -109,10 +114,12 @@ class CartItemDeleteView(View):
             cart_item = get_object_or_404(CartItem, cart=cart, product__id=product_id)
             cart_item.delete()
         else:
-            cart = request.session.get('cart', [])
+            cart = request.session.get('cart', {})
+            if not isinstance(cart, dict):
+                cart = {}
 
-            if product_id in cart:
-                cart.remove(product_id)
+            if str(product_id) in cart:
+                del cart[str(product_id)]
                 request.session['cart'] = cart
 
         return JsonResponse({"success": True, "message": "Item removed from cart."})
@@ -120,33 +127,41 @@ class CartItemDeleteView(View):
 
 
 class CartView(ListView):
-    model = Cart
     template_name = "shop/cart.html"
     context_object_name = "cart_items"
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            cart = Cart.objects.get(user=self.request.user)
-            return cart.cartitem_set.all()
+            cart, created = Cart.objects.get_or_create(user=self.request.user)
+            return cart.cartitem_set.select_related('product')
         else:
-            cart_ids = self.request.session.get('cart', [])
-            return Product.objects.filter(id__in=cart_ids)
+            cart = self.request.session.get('cart', {})
+            cart_items = []
+            for product_id, quantity in cart.items():
+                product = get_object_or_404(Product, id=product_id)
+                cart_item = CartItem(
+                    product=product,
+                    quantity=quantity,
+                    cart=None
+                )
+                cart_items.append(cart_item)
+            return cart_items
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        cart_items = self.get_queryset()
+
         total_price = 0
+        for item in cart_items:
+            item.total_price = item.product.price * item.quantity
+            total_price += item.total_price
 
-        if self.request.user.is_authenticated:
-            cart = Cart.objects.get(user=self.request.user)
-            total_price = sum(item.product.price * item.quantity for item in cart.cartitem_set.all())
-        else:
-            cart_ids = self.request.session.get('cart', [])
-            products = Product.objects.filter(id__in=cart_ids)
-            total_price = sum(product.price for product in products)
-
+        context["cart_items"] = cart_items
         context["total_price"] = total_price
-        context["cart_items"] = products
+
         return context
+
 
 
 class CreateOrderView(CreateView):
