@@ -1,6 +1,8 @@
 import logging
 from django_filters.views import FilterView
 from .filters import ProductFilter
+from review.forms import ReviewForm
+from review.models import Review
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category
@@ -74,7 +76,39 @@ class ProductsNewView(FilterView):
 
 class ProductDetailView(DetailView):
     model = Product
-    template_name = "shop/product_detail.html"
+    template_name = 'shop/product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+
+        # Получаем все отзывы для этого товара, сортируем по дате (от новых к старым)
+        reviews = Review.objects.filter(product=product).order_by('-created_at')
+        context['reviews'] = reviews
+        context['form'] = ReviewForm()  # Форма для добавления отзыва
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
+        form = ReviewForm(request.POST)
+
+        if form.is_valid():
+            # Проверка на дублирующий отзыв
+            if Review.objects.filter(author=request.user, product=product).exists():
+                return redirect('shop:product-detail', pk=product.pk)
+
+            # Создаем и сохраняем новый отзыв
+            review = form.save(commit=False)
+            review.product = product
+            review.author = request.user  # Присваиваем автором текущего пользователя
+            review.save()
+
+            return redirect('shop:product-detail', pk=product.pk)  # Перенаправляем обратно на страницу товара
+
+        # Если форма не валидна, показываем ошибки и возвращаем на ту же страницу
+        return redirect('shop:product-detail', pk=product.pk)
 
 
 class AddToCartView(View):
@@ -125,7 +159,6 @@ class CartItemDeleteView(View):
         return JsonResponse({"success": True, "message": "Item removed from cart."})
 
 
-
 class CartView(ListView):
     template_name = "shop/cart.html"
     context_object_name = "cart_items"
@@ -161,7 +194,6 @@ class CartView(ListView):
         context["total_price"] = total_price
 
         return context
-
 
 
 class CreateOrderView(CreateView):

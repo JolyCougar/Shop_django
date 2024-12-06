@@ -1,8 +1,9 @@
 <div id="reviews-tab" class="tab-pane">
     <h2>Отзывы</h2>
-    {% for review in product.reviews.all %}
+    {% for review in reviews %}
         <div class="review">
-            <p><strong>{{ review.author }}</strong></p>
+            <p><strong>{{ review.author.username }}</strong></p>
+            <p>Рейтинг: {{ review.rating.value }}/5</p>
             <p>{{ review.text }}</p>
             <p class="review-date">{{ review.created_at|date:"d M Y" }}</p>
         </div>
@@ -10,10 +11,15 @@
         <p>Пока нет отзывов. Будьте первым!</p>
     {% endfor %}
 
-    <!-- Форма для добавления отзыва -->
-    <form action="/" method="post" class="review-form">
-        {% csrf_token %}
-        <textarea name="review_text" placeholder="Напишите ваш отзыв..." required></textarea>
-        <button type="submit" class="btn btn-submit-review">Оставить отзыв</button>
-    </form>
+    <!-- Форма добавления отзыва -->
+    {% if user.is_authenticated %}
+        <h3>Добавить отзыв</h3>
+        <form method="post" class="review-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Оставить отзыв</button>
+        </form>
+    {% else %}
+        <p>Чтобы оставить отзыв, <a href="{% url 'account:login' %}">войдите</a>.</p>
+    {% endif %}
 </div>

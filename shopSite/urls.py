@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),
     path('account/', include('account.urls')),
+    path('review/', include('review.urls')),
     path('about-us/', flatpage_views.flatpage, {'url': '/about-us/'}, name='about'),
     path('contact/', flatpage_views.flatpage, {'url': '/contact/'}, name='contact'),
     path('delivery/', flatpage_views.flatpage, {'url': '/delivery/'}, name='delivery'),
