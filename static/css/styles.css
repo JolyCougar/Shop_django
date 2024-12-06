@@ -1309,10 +1309,87 @@ label[for="avatarUpload"]:hover {
 
 .button-container {
     display: flex;
-    justify-content: space-between; /* Размещает кнопки по краям */
-    margin-top: 20px; /* Отступ сверху */
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
 .button-container a {
-    margin-right: auto; /* Отодвигает кнопку "Назад к профилю" влево */
+    margin-right: auto;
 }
+
+/* Стили для переключения через текстовые ссылки */
+.tabs {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+.tab-title {
+    cursor: pointer;
+    color: #7d059c;
+    text-decoration: none;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-title.active {
+    font-weight: bold;
+    border-bottom: 2px solid #7d059c;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.review-form {
+    margin-top: 20px;
+}
+
+.review-form textarea {
+
+    width: 45rem;
+    height: 100rem;
+    max-height: 150px;
+    resize: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+.review-form .btn-submit-review {
+    display: block;
+    padding: 10px 20px;
+    background-color: #7d059c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-submit-review:hover {
+    background: var(--hover-color);
+}
+
+.review {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.review-date {
+    color: #999;
+    font-size: 0.9em;
+}
+

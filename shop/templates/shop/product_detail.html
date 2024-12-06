@@ -44,13 +44,38 @@
         </div>
     </div>
 
-    <!-- Описание продукта -->
-    <div class="description">
-        <h2>Описание товара</h2>
-        <p>{{ product.description }}</p>
+
+    <!-- Переключатели вкладок -->
+    <div class="tabs">
+        <span class="tab-title active" data-tab="description-tab">Описание</span>
+        <span class="tab-title" data-tab="reviews-tab">Отзывы</span>
     </div>
 
+    <!-- Контент вкладок -->
+    <div class="tab-content">
+        <div id="description-tab" class="tab-pane active">
+            <h2>Описание товара</h2>
+            <p>{{ product.description }}</p>
+        </div>
+        {% include 'include/review.html' %}
+    </div>
+    
+
+
     <script>
+        // Логика переключения вкладок
+        document.querySelectorAll('.tab-title').forEach(title => {
+            title.addEventListener('click', function () {
+                // Убираем активные классы
+                document.querySelectorAll('.tab-title').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+
+                // Добавляем активные классы на выбранную вкладку
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
         document.querySelectorAll('.thumbnail').forEach((thumbnail) => {
             thumbnail.addEventListener('click', function () {
                 const mainImage = document.getElementById('main-image');
