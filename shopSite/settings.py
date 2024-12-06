@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'django.contrib.flatpages',
     'django.contrib.sites',
+    'review.apps.ReviewConfig',
     'django_filters',
 ]
 
