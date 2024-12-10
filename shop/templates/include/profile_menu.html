@@ -2,19 +2,29 @@
 <aside class="filters">
 
     {% if user|is_in_group:"Модераторы" or user.is_superuser %}
-        
+
         <div class="filter-item">
-        <h3>Администрирование</h3>
-        <form>
-            {% if user.is_superuser %}
-            	<a href="{% url 'account:manage_users' %}"> Управление пользователями</a>
-            {% endif %}
-            <a href="{% url 'account:change-password' %}"> Управление продуктами</a>
-        </form>
-    </div>
-    	
-    {% endif %} 
-    
+            <h3>Администрирование</h3>
+            <form>
+                {% if user.is_superuser %}
+                    <a href="{% url 'account:manage_users' %}"> Управление пользователями</a>
+                {% endif %}
+                <a href="{% url 'account:product_list' %}"> Управление продуктами</a>
+                <a href="{% url 'account:manufacturer_create' %}"> Добавить производителя</a>
+                <a href="{% url 'account:category_create' %}"> Добавить категорию</a>
+            </form>
+        </div>
+
+        <div class="filter-item">
+            <h3>Промо-акции</h3>
+            <form>
+                <a href="{% url 'account:profile' user.pk %}">Создать акцию</a>
+                <a href="{% url 'account:profile' user.pk %}">Изменить акцию</a>
+            </form>
+        </div>
+
+    {% endif %}
+
 
     <div class="filter-item">
         <h3>Профиль</h3>

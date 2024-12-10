@@ -1,16 +1,16 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.views.generic import TemplateView
-from django.shortcuts import redirect
-from django.contrib import messages
+from django.views.generic import TemplateView, ListView
+from django.shortcuts import redirect, render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views import View
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from shop.models import Product, Cart, CartItem
-from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm
+from .forms import (CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm,
+                    ProductForm, CategoryForm, ManufacturerForm)
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
 from .models import CustomUser
@@ -148,3 +148,67 @@ class ManageUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 messages.error(request, "Группа не найдена.")
 
         return redirect('account:manage_users')
+
+
+class ListProductAdminView(ListView):
+    model = Product
+    template_name = 'account/product_list_admin.html'
+    context_object_name = 'products'
+
+
+class ProductCreateView(View):
+    def get(self, request):
+        form = ProductForm()
+        return render(request, 'account/product_form.html', {'form': form})
+
+    def post(self, request):
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Товар успешно добавлен.")
+            return redirect('account:product_list')
+        return render(request, 'account/product_form.html', {'form': form})
+
+
+class ProductUpdateView(View):
+    def get(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        form = ProductForm(instance=product)
+        return render(request, 'account/product_form.html', {'form': form})
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Товар успешно обновлен.")
+            return redirect('account:product_list')
+        return render(request, 'account/product_form.html', {'form': form})
+
+
+class ManufactureCreateAdminView(View):
+    def get(self, request):
+        form = ManufacturerForm()
+        return render(request, 'account/manufacturer_form.html', {'form': form})
+
+    def post(self, request):
+        form = ManufacturerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Производитель успешно добавлен.")
+            return redirect('account:product_list')
+        return render(request, 'account/manufacturer_form.html', {'form': form})
+
+
+class CategoryCreateAdminView(View):
+    def get(self, request):
+        form = CategoryForm()
+        return render(request, 'account/category_form.html', {'form': form})
+
+    def post(self, request):
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Категория успешно добавлена.")
+            return redirect('account:product_list')
+        return render(request, 'account/category_form.html', {'form': form})

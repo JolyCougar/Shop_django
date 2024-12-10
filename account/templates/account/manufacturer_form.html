@@ -1,0 +1,26 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Управление пользователями
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h1>Добавить производителя</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить</button>
+    </form>
+    <a href="{% url 'account:product_list' %}">Назад к списку товаров</a>
+
+{% endblock %}
+
+
+
+
+
+    
