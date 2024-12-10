@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import CustomUser
-from shop.models import Product, Manufacturer, Category
+from shop.models import Product, Manufacturer, Category, Marketing
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -73,3 +73,18 @@ class CategoryForm(forms.ModelForm):
         if Category.objects.filter(name=name).exists():
             raise forms.ValidationError("Такая категория уже существует.")
         return name
+
+
+class MarketingForm(forms.ModelForm):
+    class Meta:
+        model = Marketing
+        fields = ['name', 'image', 'description', 'description_full', 'url', 'products', 'archived']
+        widgets = {
+            'products': forms.CheckboxSelectMultiple(),
+        }
+
+    def clean_url(self):
+        url = self.cleaned_data.get('url')
+        if Marketing.objects.filter(url=url).exists():
+            raise forms.ValidationError("URL должен быть уникальным.")
+        return url

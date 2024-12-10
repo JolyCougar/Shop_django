@@ -1,0 +1,57 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Управление промо акций
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h1>Список промо-акций</h1>
+    <a href="{% url 'account:marketing_create' %}">Добавить новую промо-акцию</a>
+    <table class="orders-table">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>URL</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for marketing in marketings %}
+            <tr>
+                <td>{{ marketing.name }}</td>
+                <td>{{ marketing.description }}</td>
+                <td><a href="{{ marketing.url }}">{{ marketing.url }}</a></td>
+                <td>{% if marketing.archived %}
+                    Архивирована
+                {% else %}
+                    Активна
+                {% endif %}</td>
+                <td>
+                    <a href="{% url 'account:marketing_update' marketing.pk %}">Редактировать</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5">Нет промо-акций.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

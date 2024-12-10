@@ -8,9 +8,9 @@ from django.views import View
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from shop.models import Product, Cart, CartItem
+from shop.models import Product, Cart, CartItem, Marketing
 from .forms import (CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm,
-                    ProductForm, CategoryForm, ManufacturerForm)
+                    ProductForm, CategoryForm, ManufacturerForm, MarketingForm)
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
 from .models import CustomUser
@@ -212,3 +212,31 @@ class CategoryCreateAdminView(View):
             messages.success(request, "Категория успешно добавлена.")
             return redirect('account:product_list')
         return render(request, 'account/category_form.html', {'form': form})
+
+
+class MarketingListView(ListView):
+    model = Marketing
+    template_name = 'account/marketing_list.html'
+    context_object_name = 'marketings'
+
+
+class MarketingCreateView(CreateView):
+    model = Marketing
+    form_class = MarketingForm
+    template_name = 'account/marketing_form.html'
+    success_url = reverse_lazy('marketing_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Маркетинговая кампания успешно создана.")
+        return super().form_valid(form)
+
+
+class MarketingUpdateView(UpdateView):
+    model = Marketing
+    form_class = MarketingForm
+    template_name = 'account/marketing_form.html'
+    success_url = reverse_lazy('marketing_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Маркетинговая кампания успешно обновлена.")
+        return super().form_valid(form)

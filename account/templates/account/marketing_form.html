@@ -1,0 +1,26 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Промо акция
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <h1>{% if not marketing %}Создать{% else %}Редактировать{% endif %} промо-акцию</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{% if not marketing %}Создать{% else %}Сохранить изменения{% endif %}</button>
+    </form>
+    <a href="{% url 'account:marketing_list' %}">Назад к списку промо-акций</a>
+{% endblock %}
+
+
+
+
+
+
+
