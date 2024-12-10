@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (RegisterView, CustomLoginView, CustomLogoutView,
                     ProfileView, CustomPasswordChangeView, ChangeProfileInfoView,
-                    ClearAvatarView)
+                    ClearAvatarView, ManageUsersView)
 
 app_name = 'account'
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path("profile/change_password", CustomPasswordChangeView.as_view(), name="change-password"),
     path("profile/update/", ChangeProfileInfoView.as_view(), name="update-profile"),
     path('clear-avatar/', ClearAvatarView.as_view(), name='clear_avatar'),
+    path('manage-users/', ManageUsersView.as_view(), name='manage_users'),
 ]

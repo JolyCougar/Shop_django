@@ -1,4 +1,9 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views import View
 from django.http import JsonResponse
@@ -93,3 +98,53 @@ class ClearAvatarView(View):
         user.avatar = None
         user.save()
         return JsonResponse({'success': True})
+
+
+class ManageUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'account/manage_users.html'
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = CustomUser.objects.all()
+        context['groups'] = Group.objects.all()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get('action')
+        user_id = request.POST.get('user_id')
+
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Пользователь не найден.")
+            return redirect('account:manage_users')
+
+        if action == 'block':
+            user.is_active = False
+            user.save()
+            messages.success(request, f"Пользователь {user.username} был заблокирован.")
+        elif action == 'unblock':
+            user.is_active = True
+            user.save()
+            messages.success(request, f"Пользователь {user.username} был разблокирован.")
+        elif action == 'add_to_group':
+            group_id = request.POST.get('group_id')
+            try:
+                group = Group.objects.get(id=group_id)
+                user.groups.add(group)
+                messages.success(request, f"Пользователь {user.username} добавлен в группу {group.name}.")
+            except Group.DoesNotExist:
+                messages.error(request, "Группа не найдена.")
+        elif action == 'remove_from_group':
+            group_id = request.POST.get('group_id')
+            try:
+                group = Group.objects.get(id=group_id)
+                user.groups.remove(group)
+                messages.success(request, f"Пользователь {user.username} удалён из группы {group.name}.")
+            except Group.DoesNotExist:
+                messages.error(request, "Группа не найдена.")
+
+        return redirect('account:manage_users')
