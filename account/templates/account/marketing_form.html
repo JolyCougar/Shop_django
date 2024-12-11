@@ -1,7 +1,11 @@
 {% extends 'include/base.html' %}
 {% load add_class %}
 {% block title %}
-    Промо акция
+    {% if not marketing %}
+        Создать промо-акцию
+    {% else %}
+        Редактировать промо-акцию
+    {% endif %}
 {% endblock %}
 
 {% block filters %}
@@ -9,36 +13,106 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{% if not marketing %}Создать{% else %}Редактировать{% endif %} промо-акцию</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
 
-        <label for="{{ form.name.id_for_label }}">Имя производителя</label>
-        {{ form.name }}
 
-        <label for="{{ form.description.id_for_label }}">Описание маркетинга</label>
-        {{ form.description }}
+    <script>
+        function filterProducts() {
+            const searchInput = document.getElementById('product-search-input').value.toLowerCase();
+            const productLabels = document.querySelectorAll('.promo-form-product-list .promo-form-product-item');
 
-        <label for="{{ form.description_full.id_for_label }}">Полное описание</label>
-        {{ form.description_full }}
+            productLabels.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchInput)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
-        <label for="{{ form.url.id_for_label }}">Уникальное название</label>
-        {{ form.url }}
+    <div class="promo-form-container">
+        <h1>
+            {% if not marketing %}
+                Создать промо-акцию
+            {% else %}
+                Редактировать промо-акцию
+            {% endif %}
+        </h1>
 
-        <label for="{{ form.products.id_for_label }}">Продукты:</label>
-        {{ form.products }}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <label for="{{ form.archived.id_for_label }}">Архивная</label>
-        {{ form.archived }}
+            <!-- Имя производителя -->
+            <div class="promo-form-group">
+                <label for="{{ form.name.id_for_label }}">Имя производителя</label>
+                <input type="text" name="name" id="{{ form.name.id_for_label }}" value="{{ form.name.value }}"
+                       class="promo-form-control">
+            </div>
 
-        <button type="submit">{% if not marketing %}Создать{% else %}Сохранить изменения{% endif %}</button>
-    </form>
-    <a href="{% url 'account:marketing_list' %}">Назад к списку промо-акций</a>
+            <!-- Описание маркетинга -->
+            <div class="promo-form-group">
+                <label for="{{ form.description.id_for_label }}">Описание маркетинга</label>
+                <textarea name="description" id="{{ form.description.id_for_label }}"
+                          class="promo-form-control">{{ form.description.value }}</textarea>
+            </div>
+
+            <!-- Полное описание -->
+            <div class="promo-form-group">
+                <label for="{{ form.description_full.id_for_label }}">Полное описание</label>
+                <textarea name="description_full" id="{{ form.description_full.id_for_label }}"
+                          class="promo-form-control">{{ form.description_full.value }}</textarea>
+            </div>
+
+            <!-- Уникальное название -->
+            <div class="promo-form-group">
+                <label for="{{ form.url.id_for_label }}">Уникальное название</label>
+                <input type="text" name="url" id="{{ form.url.id_for_label }}" value="{{ form.url.value }}"
+                       class="promo-form-control">
+            </div>
+
+            <!-- Продукты -->
+            <div class="promo-form-group">
+                <label>Продукты</label>
+                <input type="text" id="product-search-input" onkeyup="filterProducts()"
+                       placeholder="Введите название для поиска" class="promo-form-control promo-form-product-search">
+                <div class="promo-form-product-list">
+                    {% for choice in form.products.field.queryset %}
+                        <div class="promo-form-product-item">
+                            <label>{{ choice.name }}</label>
+                            <input type="checkbox" name="products" value="{{ choice.pk }}"
+                                   {% if choice.pk in form.products.value %}checked{% endif %}>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Загрузка картинки -->
+            <div class="promo-form-group">
+                <label for="image-upload">Загрузить картинку акции</label>
+                <input type="file" name="image" id="image-upload" class="promo-form-control">
+            </div>
+
+            <!-- Архивная -->
+            <div>
+                <label for="{{ form.archived.id_for_label }}">Архивная</label>
+                <input type="checkbox" name="archived" id="{{ form.archived.id_for_label }}"
+                       {% if form.archived.value %}checked{% endif %} class="promo-form-check-input">
+            </div>
+
+            <!-- Сохранить -->
+            <button type="submit" class="promo-form-button">
+                {% if not marketing %}
+                    Создать
+                {% else %}
+                    Сохранить изменения
+                {% endif %}
+            </button>
+        </form>
+
+        <!-- Ссылка назад -->
+        <a href="{% url 'account:marketing_list' %}" class="promo-form-back-link">Назад к списку промо-акций</a>
+    </div>
+
 {% endblock %}
-
-
-
-
-
-
-
