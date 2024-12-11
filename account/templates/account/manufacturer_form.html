@@ -12,7 +12,11 @@
     <h1>Добавить производителя</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <label for="{{ form.name.id_for_label }}">Имя производителя</label>
+        {{ form.name }}
+
+
         <button type="submit">Добавить</button>
     </form>
     <a href="{% url 'account:product_list' %}">Назад к списку товаров</a>

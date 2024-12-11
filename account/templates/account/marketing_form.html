@@ -12,7 +12,25 @@
     <h1>{% if not marketing %}Создать{% else %}Редактировать{% endif %} промо-акцию</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <label for="{{ form.name.id_for_label }}">Имя производителя</label>
+        {{ form.name }}
+
+        <label for="{{ form.description.id_for_label }}">Описание маркетинга</label>
+        {{ form.description }}
+
+        <label for="{{ form.description_full.id_for_label }}">Полное описание</label>
+        {{ form.description_full }}
+
+        <label for="{{ form.url.id_for_label }}">Уникальное название</label>
+        {{ form.url }}
+
+        <label for="{{ form.products.id_for_label }}">Продукты:</label>
+        {{ form.products }}
+
+        <label for="{{ form.archived.id_for_label }}">Архивная</label>
+        {{ form.archived }}
+
         <button type="submit">{% if not marketing %}Создать{% else %}Сохранить изменения{% endif %}</button>
     </form>
     <a href="{% url 'account:marketing_list' %}">Назад к списку промо-акций</a>
