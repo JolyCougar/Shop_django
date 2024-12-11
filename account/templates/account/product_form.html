@@ -1,7 +1,11 @@
 {% extends 'include/base.html' %}
 {% load add_class %}
 {% block title %}
-    Управление пользователями
+    {% if form.instance.pk %}
+        Редактировать товар
+    {% else %}
+        Добавить новый товар
+    {% endif %}
 {% endblock %}
 
 {% block filters %}
@@ -10,15 +14,150 @@
 
 {% block content %}
 
-    <h1>{% if form.instance.pk %}Редактировать товар{% else %}Добавить новый товар{% endif %}</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {{ formset.management_form }}
-        {% for form in formset %}
-            {{ form.as_p }}
-        {% endfor %}
-        <button type="submit">Сохранить</button>
-    </form>
+    <div class="product-form-container">
+        <h1>
+            {% if form.instance.pk %}
+                Редактировать товар
+            {% else %}
+                Добавить новый товар
+            {% endif %}
+        </h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Название товара -->
+            <div class="product-form-group">
+                <label for="{{ form.name.id_for_label }}">Название товара</label>
+                <input type="text" name="name" id="{{ form.name.id_for_label }}" value="{{ form.name.value }}"
+                       class="product-form-control">
+            </div>
+
+            <!-- Описание товара -->
+            <div class="product-form-group">
+                <label for="{{ form.description.id_for_label }}">Описание</label>
+                <textarea name="description" id="{{ form.description.id_for_label }}"
+                          class="product-form-control">{{ form.description.value }}</textarea>
+            </div>
+
+            <!-- Реклама товара -->
+            <div class="product-form-group">
+                <label for="{{ form.marketing_info.id_for_label }}">Реклама</label>
+                <textarea name="description" id="{{ form.marketing_info.id_for_label }}"
+                          class="product-form-control">{{ form.marketing_info.value }}</textarea>
+            </div>
+
+            <!-- Характеристики товара -->
+            <div class="product-form-group">
+                <label for="{{ form.attribute.id_for_label }}">Характеристики</label>
+                <textarea name="description" id="{{ form.attribute.id_for_label }}"
+                          class="product-form-control">{{ form.attribute.value }}</textarea>
+            </div>
+
+            <!-- Производитель -->
+            <div class="product-form-group">
+                <label for="{{ form.manufacturer.id_for_label }}">Производитель</label>
+                <select name="manufacturer" id="{{ form.manufacturer.id_for_label }}" class="product-form-control">
+                    {% for choice in form.manufacturer.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.manufacturer.value %}selected{% endif %}>
+                            {{ choice.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Категория -->
+            <div class="product-form-group">
+                <label for="{{ form.category.id_for_label }}">Категория</label>
+                <select name="category" id="{{ form.category.id_for_label }}" class="product-form-control">
+                    {% for choice in form.category.field.choices %}
+                        <option value="{{ choice.0 }}" {% if choice.0 == form.category.value %}selected{% endif %}>
+                            {{ choice.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Цена товара -->
+            <div class="product-form-group">
+                <label for="{{ form.price.id_for_label }}">Цена</label>
+                <input type="number" name="price" id="{{ form.price.id_for_label }}" value="{{ form.price.value }}"
+                       class="product-form-control">
+            </div>
+
+            <!-- Скидка товара -->
+            <div class="product-form-group">
+                <label for="{{ form.discount.id_for_label }}">Скидка (%)</label>
+                <input type="number" name="discount" id="{{ form.discount.id_for_label }}"
+                       value="{{ form.discount.value }}" class="product-form-control">
+            </div>
+
+            <!-- Количество на складе -->
+            <div class="product-form-group">
+                <label for="{{ form.stock.id_for_label }}">Количество на складе</label>
+                <input type="number" name="stock" id="{{ form.stock.id_for_label }}" value="{{ form.stock.value }}"
+                       class="product-form-control">
+            </div>
+
+            <!-- Новый товар -->
+            <div class="product-form-group">
+                <label for="{{ form.new.id_for_label }}">Новый товар?</label>
+                <input type="checkbox" name="new" id="{{ form.new.id_for_label }}"
+                       {% if form.new.value %}checked{% endif %} class="product-form-check-input">
+            </div>
+
+            <!-- Архивный товар -->
+            <div class="product-form-group">
+                <label for="{{ form.archived.id_for_label }}">Архивный товар?</label>
+                <input type="checkbox" name="new" id="{{ form.archived.id_for_label }}"
+                       {% if form.archived.value %}checked{% endif %} class="product-form-check-input">
+            </div>
+
+            <!-- Изображение товара -->
+            <div class="product-form-group">
+                <label for="{{ form.preview.id_for_label }}">Изображение товара</label>
+                <input type="file" name="preview" id="{{ form.preview.id_for_label }}" class="product-file-input">
+            </div>
+
+            <!-- Кнопка для раскрытия/скрытия дополнительных изображений -->
+            {% if formset %}
+                <button type="button" class="toggle-button" onclick="toggleAdditionalImages()">Показать/Скрыть
+                    дополнительные изображения
+                </button>
+                <div class="additional-images-container">
+                    <div class="product-form-group">
+                        <h4>Дополнительные изображения</h4>
+                        {% for form in formset %}
+                            <div class="product-form-group">
+                                <label for="{{ form.preview.id_for_label }}">Изображение товара</label>
+                                <input type="file" name="preview" id="{{ form.preview.id_for_label }}"
+                                       class="product-file-input">
+                            </div>
+
+                            <div class="product-form-group">
+                                <label for="{{ form.description.id_for_label }}">Описание</label>
+                                <textarea name="description" id="{{ form.description.id_for_label }}"
+                                          class="product-form-control">{{ form.description.value }}</textarea>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Кнопка отправки формы -->
+            <button type="submit" class="product-form-button">Сохранить</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleAdditionalImages() {
+            var container = document.querySelector('.additional-images-container');
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+    </script>
 
 {% endblock %}

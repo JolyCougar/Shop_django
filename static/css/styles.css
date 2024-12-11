@@ -1392,3 +1392,100 @@ label[for="avatarUpload"]:hover {
     font-size: 0.9em;
 }
 
+.product-form-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-form-container h1 {
+    text-align: center;
+    color: #333;
+}
+
+.product-form-group {
+    margin-bottom: 20px;
+}
+
+.product-form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.product-form-group input,
+.product-form-group select,
+.product-form-group textarea {
+    width: 100%;
+    max-width: 500px; /* Фиксированная ширина для полей */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box; /* Для правильного учета padding */
+    margin-bottom: 10px; /* Добавляем отступ снизу для каждого поля */
+}
+
+.product-form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.product-form-group .product-file-input {
+    padding: 5px;
+}
+
+.product-form-group textarea {
+    resize: vertical;
+}
+
+.product-form-button {
+    width: 100%;
+    /* Фиксированная ширина для кнопки */
+    padding: 12px;
+    background-color: #7d059c;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.product-form-button:hover {
+    background-color: #00bfa5;
+}
+
+.product-form-group input:focus,
+.product-form-group select:focus,
+.product-form-group textarea:focus {
+    border-color: #7d059c;
+    outline: none;
+}
+
+.toggle-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.toggle-button:hover {
+    background-color: #5a6268;
+}
+
+.additional-images-container {
+    display: none;
+    margin-top: 20px;
+}
+
