@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
+from django.forms.models import inlineformset_factory
 from .models import CustomUser
-from shop.models import Product, Manufacturer, Category, Marketing
+from shop.models import Product, Manufacturer, Category, Marketing, ProductImage
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -35,8 +36,8 @@ class ProfileUpdateForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'marketing_info', 'category', 'manufacturer', 'price', 'discount', 'new',
-                  'archived', 'stock', 'attribute', 'preview']
+        fields = ['name', 'description', 'marketing_info', 'category', 'manufacturer',
+                  'price', 'discount', 'new', 'archived', 'stock', 'attribute', 'preview']
 
     def clean_price(self):
         price = self.cleaned_data.get('price')
@@ -49,6 +50,21 @@ class ProductForm(forms.ModelForm):
         if discount < 0 or discount > 100:
             raise forms.ValidationError("Скидка должна быть в пределах от 0 до 100.")
         return discount
+
+
+class ProductImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductImage
+        fields = ['image', 'description']
+
+
+ProductImageFormSet = inlineformset_factory(
+    Product,
+    ProductImage,
+    form=ProductImageForm,
+    extra=3,
+    can_delete=True
+)
 
 
 class ManufacturerForm(forms.ModelForm):

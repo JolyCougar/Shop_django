@@ -1,4 +1,3 @@
-
 {% extends 'include/base.html' %}
 {% load add_class %}
 {% block title %}
@@ -10,12 +9,16 @@
 {% endblock %}
 
 {% block content %}
-    
+
     <h1>{% if form.instance.pk %}Редактировать товар{% else %}Добавить новый товар{% endif %}</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">{% if form.instance.pk %}Обновить{% else %}Добавить{% endif %}</button>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {{ form.as_p }}
+        {% endfor %}
+        <button type="submit">Сохранить</button>
     </form>
 
 {% endblock %}

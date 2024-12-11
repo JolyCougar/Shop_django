@@ -1,16 +1,15 @@
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views.generic import TemplateView, ListView
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views import View
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
-from shop.models import Product, Cart, CartItem, Marketing
+from shop.models import Product, Cart, CartItem, Marketing, Category, Manufacturer
 from .forms import (CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm,
-                    ProductForm, CategoryForm, ManufacturerForm, MarketingForm)
+                    ProductForm, CategoryForm, ManufacturerForm, MarketingForm, ProductImageFormSet)
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
 from .models import CustomUser
@@ -156,62 +155,80 @@ class ListProductAdminView(ListView):
     context_object_name = 'products'
 
 
-class ProductCreateView(View):
-    def get(self, request):
-        form = ProductForm()
-        return render(request, 'account/product_form.html', {'form': form})
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'account/product_form.html'
+    success_url = reverse_lazy('account:product_list')
 
-    def post(self, request):
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Товар успешно добавлен.")
-            return redirect('account:product_list')
-        return render(request, 'account/product_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES)
+        else:
+            context['formset'] = ProductImageFormSet()
+        return context
 
-
-class ProductUpdateView(View):
-    def get(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        form = ProductForm(instance=product)
-        return render(request, 'account/product_form.html', {'form': form})
-
-    def post(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Товар успешно обновлен.")
-            return redirect('account:product_list')
-        return render(request, 'account/product_form.html', {'form': form})
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            messages.success(self.request, "Товар успешно добавлен.")
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
-class ManufactureCreateAdminView(View):
-    def get(self, request):
-        form = ManufacturerForm()
-        return render(request, 'account/manufacturer_form.html', {'form': form})
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'account/product_form.html'
+    success_url = reverse_lazy('account:product_list')
 
-    def post(self, request):
-        form = ManufacturerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Производитель успешно добавлен.")
-            return redirect('account:product_list')
-        return render(request, 'account/manufacturer_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            context['formset'] = ProductImageFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            messages.success(self.request, "Товар успешно обновлен.")
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
-class CategoryCreateAdminView(View):
-    def get(self, request):
-        form = CategoryForm()
-        return render(request, 'account/category_form.html', {'form': form})
+class ManufactureCreateAdminView(CreateView):
+    model = Manufacturer
+    form_class = ManufacturerForm
+    template_name = 'account/manufacturer_form.html'
+    success_url = reverse_lazy('account:product_list')
 
-    def post(self, request):
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Категория успешно добавлена.")
-            return redirect('account:product_list')
-        return render(request, 'account/category_form.html', {'form': form})
+    def form_valid(self, form):
+        messages.success(self.request, "Производитель успешно добавлен.")
+        return super().form_valid(form)
+
+
+class CategoryCreateAdminView(CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'account/category_form.html'
+    success_url = reverse_lazy('account:product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Категория успешно добавлена.")
+        return super().form_valid(form)
 
 
 class MarketingListView(ListView):
