@@ -1595,3 +1595,15 @@ label[for="avatarUpload"]:hover {
     text-decoration: underline;
 }
 
+.back-to-product-list-btn {
+    display: inline-block;
+    background: #6d3dab;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.back-to-product-list-btn:hover {
+    background-color: #00bfa5;
+}

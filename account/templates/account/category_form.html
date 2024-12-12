@@ -12,11 +12,17 @@
     <h1>Добавить категорию</h1>
     <form method="post">
         {% csrf_token %}
-        <label for="{{ form.name.id_for_label }}">Название категории</label>
-        {{ form.name }}
-        <button type="submit">Добавить</button>
+
+        <div class="product-form-group">
+            <label for="{{ form.name.id_for_label }}">Введите название</label>
+            <input type="text" name="name" id="{{ form.name.id_for_label }}"
+                   class="product-form-control">
+        </div>
+
+
+        <button type="submit" class="product-form-button">Добавить</button>
     </form>
-    <a href="{% url 'account:product_list' %}">Назад к списку товаров</a>
+    <p><a href="{% url 'account:product_list' %}" class="back-to-product-list-btn">Назад к списку товаров</a></p>
 
 {% endblock %}
 
