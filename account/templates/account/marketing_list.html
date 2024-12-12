@@ -34,7 +34,7 @@
                     Активна
                 {% endif %}</td>
                 <td>
-                    <a href="{% url 'account:marketing_update' marketing.pk %}">Редактировать</a>
+                    <p><a href="{% url 'account:marketing_update' marketing.pk %}" class="back-to-product-list-btn">Редактировать</a>
                 </td>
             </tr>
         {% empty %}

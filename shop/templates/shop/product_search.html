@@ -1,0 +1,48 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <h1>Результаты поиска</h1>
+
+
+    {% if products %}
+        <div class="product-list">
+            {% for product in products %}
+                <div class="product-card">
+                    <a href="{% url 'shop:product-detail' product.id %}">
+                        <img src="{{ product.preview.url }}" alt="{{ product.name }}">
+                        {% if product.new %}
+                            <span style="color: green; font-weight: bold;">Новинка!</span>
+                        {% endif %}
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.marketing_info }}</p>
+                        {% if product.discount > 0 %}
+                            <p class="old-price">Старая цена: {{ product.price }} ₽</p>
+                        {% endif %}
+                        <p class="current-price">Цена: {{ product.discounted_price }} ₽</p>
+                        <form action="{% url 'shop:add_to_cart' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-add-to-cart">Добавить в корзину</button>
+                        </form>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">Назад</a>
+                {% endif %}
+                <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Вперед</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Ничего не найдено по запросу "{{ query }}".</p>
+    {% endif %}
+
+{% endblock %}

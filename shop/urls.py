@@ -3,7 +3,7 @@ from .views import (ProductListView, ProductDetailView, AddToCartView,
                     CartView, OrdersListView, OrderDetailView, MainPage,
                     CreateOrderView, OrderSuccessView, CartItemDeleteView,
                     PromotionDetailView, ProductByCategoryView, PromotionListView,
-                    ProductsNewView)
+                    ProductsNewView, ProductSearchView)
 
 app_name = 'shop'
 
@@ -22,5 +22,6 @@ urlpatterns = [
     path('cart/remove/<int:pk>/', CartItemDeleteView.as_view(), name='remove_from_cart'),
     path('promotion/', PromotionListView.as_view(), name='promotion_list'),
     path('promotion/<slug:slug>/', PromotionDetailView.as_view(), name='promotion_detail'),
+    path('search/', ProductSearchView.as_view(), name='product_search'),
 
 ]

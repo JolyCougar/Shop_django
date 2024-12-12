@@ -891,6 +891,18 @@ button:focus {
     text-decoration: none; /* Убираем подчеркивание при наведении */
 }
 
+.search-header {
+    background: none;
+    border: none;
+    color: #555;
+    text-decoration: None;
+    cursor: pointer;
+}
+
+.search-header:hover {
+    text-decoration: none;
+}
+
 /* Стили для таблицы заказов */
 .orders-table {
     width: 100%;
@@ -1120,10 +1132,10 @@ button:focus {
     box-shadow: 0 4px 10px var(--card-hover-color);
 }
 
-.promotion-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+.promotion-image-detail {
+    width: auto;
+    height: 500px;
+    object-fit: initial;
     border-bottom: 2px solid var(--primary-color);
 }
 
