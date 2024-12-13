@@ -1,7 +1,7 @@
 {% extends 'include/base.html' %}
 {% load add_class %}
 {% block title %}
-    Управление пользователями
+    Добавить производителя
 {% endblock %}
 
 {% block filters %}
@@ -22,7 +22,7 @@
 
         <button type="submit" class="product-form-button">Добавить</button>
     </form>
-    <p><a href="{% url 'account:product_list' %}" class="back-to-product-list-btn">Назад к списку товаров</a></p>
+    <p><a href="{% url 'shop:product_list_admin' %}" class="back-to-product-list-btn">Назад к списку товаров</a></p>
 
 {% endblock %}
 

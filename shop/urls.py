@@ -3,7 +3,10 @@ from .views import (ProductListView, ProductDetailView, AddToCartView,
                     CartView, OrdersListView, OrderDetailView, MainPage,
                     CreateOrderView, OrderSuccessView, CartItemDeleteView,
                     PromotionDetailView, ProductByCategoryView, PromotionListView,
-                    ProductsNewView, ProductSearchView)
+                    ProductsNewView, ProductSearchView, ProductCreateView,
+                    ProductUpdateView, ListProductAdminView, ManufactureCreateAdminView,
+                    CategoryCreateAdminView, MarketingCreateView, MarketingListView,
+                    MarketingUpdateView)
 
 app_name = 'shop'
 
@@ -23,5 +26,13 @@ urlpatterns = [
     path('promotion/', PromotionListView.as_view(), name='promotion_list'),
     path('promotion/<slug:slug>/', PromotionDetailView.as_view(), name='promotion_detail'),
     path('search/', ProductSearchView.as_view(), name='product_search'),
+    path('profile/products/', ListProductAdminView.as_view(), name='product_list_admin'),
+    path('profile/product/create/', ProductCreateView.as_view(), name='product_create_admin'),
+    path('profile/product/<int:pk>/edit/', ProductUpdateView.as_view(), name='product_update_admin'),
+    path('profile/category/create/', CategoryCreateAdminView.as_view(), name='category_create_admin'),
+    path('profile/manufacturer/create/', ManufactureCreateAdminView.as_view(), name='manufacturer_create_admin'),
+    path('marketings/', MarketingListView.as_view(), name='marketing_list_admin'),
+    path('marketing/create/', MarketingCreateView.as_view(), name='marketing_create_admin'),
+    path('marketing/<int:pk>/edit/', MarketingUpdateView.as_view(), name='marketing_update_admin'),
 
 ]

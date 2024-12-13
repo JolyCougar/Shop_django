@@ -36,7 +36,7 @@
     </style>
 
     <h1>Список товаров</h1>
-    <p><a href="{% url 'account:product_create' %}" class="back-to-product-list-btn">Добавить новый товар</a>
+    <p><a href="{% url 'shop:product_create_admin' %}" class="back-to-product-list-btn">Добавить новый товар</a>
     <table class="orders-table">
         <thead>
         <tr>
@@ -53,7 +53,7 @@
                 <td>{{ product.description }}</td>
                 <td>{{ product.price }}</td>
                 <td>
-                    <p><a href="{% url 'account:product_update' product.pk %}" class="back-to-product-list-btn">Редактировать</a>
+                    <p><a href="{% url 'shop:product_update_admin' product.pk %}" class="back-to-product-list-btn">Редактировать</a>
                 </td>
             </tr>
         {% endfor %}

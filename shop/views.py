@@ -1,13 +1,15 @@
 import logging
+from django.contrib import messages
 from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm
 from review.models import Review
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category
+from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet
+from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category, Manufacturer
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView, DetailView, View, TemplateView, CreateView
+from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
 
 log = logging.getLogger(__name__)
 
@@ -265,3 +267,113 @@ class ProductSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q', '')
         return context
+
+
+class ListProductAdminView(ListView):
+    model = Product
+    template_name = 'shop/profile_admin/product_list_admin.html'
+    context_object_name = 'products'
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'shop/profile_admin/product_form.html'
+    success_url = reverse_lazy('account:product_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES)
+        else:
+            context['formset'] = ProductImageFormSet()
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            messages.success(self.request, "Товар успешно добавлен.")
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'shop/profile_admin/product_form.html'
+    success_url = reverse_lazy('account:product_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = ProductImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            context['formset'] = ProductImageFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            messages.success(self.request, "Товар успешно обновлен.")
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+class ManufactureCreateAdminView(CreateView):
+    model = Manufacturer
+    form_class = ManufacturerForm
+    template_name = 'shop/profile_admin/manufacturer_form.html'
+    success_url = reverse_lazy('account:product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Производитель успешно добавлен.")
+        return super().form_valid(form)
+
+
+class CategoryCreateAdminView(CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'shop/profile_admin/category_form.html'
+    success_url = reverse_lazy('account:product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Категория успешно добавлена.")
+        return super().form_valid(form)
+
+
+class MarketingListView(ListView):
+    model = Marketing
+    template_name = 'shop/profile_admin/marketing_list.html'
+    context_object_name = 'marketings'
+
+
+class MarketingCreateView(CreateView):
+    model = Marketing
+    form_class = MarketingForm
+    template_name = 'shop/profile_admin/marketing_form.html'
+    success_url = reverse_lazy('marketing_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Маркетинговая кампания успешно создана.")
+        return super().form_valid(form)
+
+
+class MarketingUpdateView(UpdateView):
+    model = Marketing
+    form_class = MarketingForm
+    template_name = 'shop/profile_admin/marketing_form.html'
+    success_url = reverse_lazy('marketing_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Маркетинговая кампания успешно обновлена.")
+        return super().form_valid(form)

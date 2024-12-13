@@ -10,8 +10,9 @@
 
 {% block content %}
     <h1>Список промо-акций</h1>
-    <p><a href="{% url 'account:marketing_create' %}" class="back-to-product-list-btn">Добавить новую промо-акцию</a></p>
-    
+    <p><a href="{% url 'shop:marketing_create_admin' %}" class="back-to-product-list-btn">Добавить новую промо-акцию</a>
+    </p>
+
     <table class="orders-table">
         <thead>
         <tr>
@@ -34,7 +35,7 @@
                     Активна
                 {% endif %}</td>
                 <td>
-                    <p><a href="{% url 'account:marketing_update' marketing.pk %}" class="back-to-product-list-btn">Редактировать</a>
+                    <p><a href="{% url 'shop:marketing_update_admin' marketing.pk %}" class="back-to-product-list-btn">Редактировать</a>
                 </td>
             </tr>
         {% empty %}
