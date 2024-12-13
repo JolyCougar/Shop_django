@@ -1,7 +1,8 @@
+from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views.generic import TemplateView, ListView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views import View
 from django.http import JsonResponse
@@ -11,7 +12,7 @@ from shop.models import Product, Cart, CartItem
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
-from .models import CustomUser
+from .models import CustomUser, EmailVerification
 import logging
 
 log = logging.getLogger(__name__)
@@ -148,4 +149,18 @@ class ManageUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return redirect('account:manage_users')
 
 
-
+class VerifyEmailView(View):
+    def get(self, request, token):
+        try:
+            verification = EmailVerification.objects.get(token=token)
+            user = verification.user
+            user.email_verified = True  # Устанавливаем статус подтверждения
+            user.is_active = True  # Активируем пользователя
+            user.save()
+            verification.delete()  # Удаляем токен после подтверждения
+            login(request, user)  # Вход пользователя
+            log.info(f'Пользователь {user.username} подтвердил свой E-mail.')
+            return redirect('shop:main')  # Перенаправление на главную страницу
+        except EmailVerification.DoesNotExist:
+            log.warning(f'Ошибка подтверждения E-mail: неверный токен.')
+            return render(request, 'account/email/verification_failed.html')
