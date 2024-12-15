@@ -14,6 +14,6 @@ urlpatterns = [
     path("profile/update/", ChangeProfileInfoView.as_view(), name="update-profile"),
     path('clear-avatar/', ClearAvatarView.as_view(), name='clear_avatar'),
     path('profile/manage-users/', ManageUsersView.as_view(), name='manage_users'),
-    path('profile/verify_email/', VerifyEmailView.as_view(), name='verify_email')
+    path('verify-email/<uuid:token>/', VerifyEmailView.as_view(), name='verify_email'),
 
 ]

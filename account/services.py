@@ -7,7 +7,6 @@ import logging
 logger = logging.getLogger('__name__')
 
 
-
 class EmailService:
 
     @staticmethod
@@ -20,12 +19,10 @@ class EmailService:
                 reverse('account:verify_email', args=[email_verification.token])
             )
             # Отправляем электронное письмо асинхронно
+            print('im here service')
             send_verification_email_task.delay(verification_link, user.email, email_verification.token)
         except ObjectDoesNotExist:
             logger.error(f"Не найден профиль для пользователя: {user.id}")
 
         except Exception as e:
             logger.error(f"Ошибка отправки письма подтверждения E-mail: {str(e)}")
-
-
-

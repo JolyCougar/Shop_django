@@ -13,6 +13,7 @@ from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpda
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
 from .models import CustomUser, EmailVerification
+from .services import EmailService
 import logging
 
 log = logging.getLogger(__name__)
@@ -24,7 +25,19 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('shop:product-list')
 
     def form_valid(self, form):
+        user = form.save(commit=False)
+        user.save()
         messages.success(self.request, 'Ваш аккаунт был успешно создан!')
+
+        try:
+            EmailService.send_verification_email(self.request, user)
+            message_success = 'Регистрация прошла успешна! Проверьте вашу почту для подтверждения. '
+            messages.success(self.request, message_success)
+        except Exception as e:
+            message_warning = ('Регистрация успешна, но не удалось отправить письмо с подтверждением. '
+                               'Пожалуйста попробуйте отправить письмо через несколько минут')
+            messages.warning(self.request, message_warning)
+
         return super().form_valid(form)
 
 

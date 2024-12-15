@@ -1,9 +1,9 @@
+import os
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from celery import shared_task
 import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 def send_verification_email_task(verification_link, user_email, token):
     try:
         # Генерируем HTML-содержимое письма
+        print('I m here')
         html_message = render_to_string('account/email/messages_to_verification.html', {
             'verification_link': verification_link,
             'token': token
@@ -21,9 +22,9 @@ def send_verification_email_task(verification_link, user_email, token):
         text_message = strip_tags(html_message)
 
         send_mail(
-            'toDo app: Добро пожаловать!',
+            'MyShop: Добро пожаловать!',
             text_message,
-            'EMAIL_HOST_USER',
+            os.getenv('EMAIL_HOST_USER'),
             [user_email],
             fail_silently=False,
             html_message=html_message,  # Добавляем HTML-содержимое
