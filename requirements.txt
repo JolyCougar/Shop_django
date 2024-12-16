@@ -18,6 +18,8 @@ platformdirs==4.3.6
 prompt_toolkit==3.0.48
 pylint==3.3.2
 python-dateutil==2.9.0.post0
+python-decouple==3.8
+redis==5.2.1
 six==1.17.0
 sqlparse==0.5.1
 tomlkit==0.13.2

@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from .models import EmailVerification
-from .tasks import send_verification_email_task
+from django.template.loader import render_to_string
+from .tasks import send_email_task
 from django.urls import reverse
 import logging
 
@@ -19,8 +20,11 @@ class EmailService:
                 reverse('account:verify_email', args=[email_verification.token])
             )
             # Отправляем электронное письмо асинхронно
-            print('im here service')
-            send_verification_email_task.delay(verification_link, user.email, email_verification.token)
+            subject = 'MyShop: Добро пожаловать!'
+            html_message = render_to_string('account/email/messages_to_verification.html', {
+                'verification_link': verification_link,
+            })
+            send_email_task.delay(html_message, user.email, subject)
         except ObjectDoesNotExist:
             logger.error(f"Не найден профиль для пользователя: {user.id}")
 
