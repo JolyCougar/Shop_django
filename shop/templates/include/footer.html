@@ -3,8 +3,8 @@
         <div class="footer-logo">MYShop</div>
         <nav class="footer-nav">
             <a href="{% url 'about' %}" title="О компании">О компании</a>
-            <a href="/" title="Политика конфиденциальности">Политика конфиденциальности</a>
-            <a href="/" title="Условия использования">Условия использования</a>
+            <a href="{% url 'privacy-policy' %}" title="Политика конфиденциальности">Политика конфиденциальности</a>
+            <a href="{% url 'terms-of-use' %}" title="Условия использования">Условия использования</a>
             <a href="{% url 'contact' %}" title="Контакты">Контакты</a>
         </nav>
         <div class="footer-social">

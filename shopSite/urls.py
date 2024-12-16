@@ -30,6 +30,8 @@ urlpatterns = [
     path('delivery/', flatpage_views.flatpage, {'url': '/delivery/'}, name='delivery'),
     path('warranty/', flatpage_views.flatpage, {'url': '/warranty/'}, name='warranty'),
     path('trade_in/', flatpage_views.flatpage, {'url': '/trade_in/'}, name='trade_in'),
+    path('privacy-policy/', flatpage_views.flatpage, {'url': '/privacy-policy/'}, name='privacy-policy'),
+    path('terms-of-use/', flatpage_views.flatpage, {'url': '/terms-of-use/'}, name='terms-of-use'),
 ]
 
 if settings.DEBUG:
