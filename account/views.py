@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views import View
@@ -13,7 +13,7 @@ from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpda
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
 from .models import CustomUser, EmailVerification
-from .services import EmailService
+from .services import EmailService, PasswordGenerator
 import logging
 
 log = logging.getLogger(__name__)
@@ -34,6 +34,7 @@ class RegisterView(CreateView):
             message_success = 'Регистрация прошла успешна! Проверьте вашу почту для подтверждения. '
             messages.success(self.request, message_success)
         except Exception as e:
+            log.error(f"Произошла ошибка отправки письма с подтверждением {str(e)}")
             message_warning = ('Регистрация успешна, но не удалось отправить письмо с подтверждением. '
                                'Пожалуйста попробуйте отправить письмо через несколько минут')
             messages.warning(self.request, message_warning)
@@ -167,13 +168,41 @@ class VerifyEmailView(View):
         try:
             verification = EmailVerification.objects.get(token=token)
             user = verification.user
-            user.email_verified = True  # Устанавливаем статус подтверждения
-            user.is_active = True  # Активируем пользователя
+            user.email_verified = True
+            user.is_active = True
             user.save()
-            verification.delete()  # Удаляем токен после подтверждения
-            login(request, user)  # Вход пользователя
+            verification.delete()
+            login(request, user)
             log.info(f'Пользователь {user.username} подтвердил свой E-mail.')
-            return redirect('shop:main')  # Перенаправление на главную страницу
+            return redirect('shop:main')
         except EmailVerification.DoesNotExist:
             log.warning(f'Ошибка подтверждения E-mail: неверный токен.')
             return render(request, 'account/email/verification_failed.html')
+
+
+class PasswordRecoveryView(View):
+    def get(self, request):
+        return render(request, 'account/password_recovery.html')
+
+    def post(self, request):
+        username_or_email = request.POST.get('username_or_email')
+
+        try:
+            user = (CustomUser.objects.filter(username=username_or_email).first() or
+                    CustomUser.objects.filter(email=username_or_email).first()
+                    )
+
+            if user:
+                new_password = PasswordGenerator.generate_random_password(length=8)
+                user.set_password(new_password)
+                user.save()
+
+                EmailService.send_new_password(user, new_password)
+                log.info(f"Пользователь {user.username} сменил пароль")
+            else:
+                log.info(f"Пользователь {user.username} не найден.")
+
+        except Exception as e:
+            log.info(f"Произошла ошибка: {str(e)}")
+
+        return redirect("account:login")

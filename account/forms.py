@@ -4,7 +4,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import CustomUser
 
 
-
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     bio = forms.CharField(max_length=500, required=False, widget=forms.Textarea)
@@ -30,5 +29,3 @@ class ProfileUpdateForm(forms.ModelForm):
         widgets = {
             "bio": forms.Textarea(attrs={"rows": 5}),
         }
-
-
