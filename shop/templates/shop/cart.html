@@ -8,8 +8,8 @@
                 <thead>
                 <tr>
                     <th>Товар</th>
-                    <th>Описание</th>
                     <th>Цена</th>
+                    <th>Скидка</th>
                     <th>Количество</th>
                     <th>Итого</th>
                     <th>Действия</th>
@@ -25,13 +25,13 @@
                                 {{ item.product.name }}
                             </a>
                         </td>
-                        <td>{{ item.product.description|default:"Описание отсутствует" }}</td>
-                        <td>₽{{ item.product.price }}</td>
+                        <td>{{ item.product.price }}₽</td>
+                        <td>{{ item.product.discount }}%</td>
                         <td>
                             <input type="number" value="{{ item.quantity }}" min="1" class="quantity"
                                    data-price="{{ item.product.price }}">
                         </td>
-                        <td class="item-total">₽{{ item.total_price }}</td>
+                        <td class="item-total">{{ item.total_price }}₽</td>
                         <td>
                             <button class="remove-from-cart" data-id="{{ item.product.id }}">Удалить</button>
                         </td>
@@ -43,9 +43,7 @@
                 <h2>Итого: <span class="total-price">₽{{ total_price }}</span></h2>
                 <form method="POST" action="{% url 'shop:create_order' %}">
                     {% csrf_token %}
-                    <label for="delivery_address">Адрес доставки:</label>
-                    <input type="text" name="delivery_address" required>
-                    <button type="submit" class="btn">Создать заказ</button>
+                    <button type="submit" class="btn">Оформить заказ</button>
                 </form>
             </div>
         {% else %}
@@ -85,7 +83,7 @@
                 document.querySelectorAll('.item-total').forEach(cell => {
                     total += parseFloat(cell.textContent.replace('₽', ''));
                 });
-                document.querySelector('.total-price').textContent = `₽${total.toFixed(2)}`;
+                document.querySelector('.total-price').textContent = `${total.toFixed(2)}₽`;
             };
         });
     </script>

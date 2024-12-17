@@ -84,6 +84,10 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     promo = models.CharField(max_length=20, null=True, blank=True)
     complete = models.BooleanField(default=False)
+    full_name = models.CharField(max_length=255, verbose_name="ФИО получателя", null=True)
+    city = models.CharField(max_length=100, verbose_name="Город", null=True)
+    payment_method = models.CharField(max_length=50, verbose_name="Способ оплаты", default="Онлайн")
+    delivery_method = models.CharField(max_length=50, verbose_name="Способ доставки", default="Транспортной компанией")
 
     def __str__(self):
         return f'Order #{self.id} by {self.user.username}'

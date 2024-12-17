@@ -6,6 +6,8 @@ from review.forms import ReviewForm
 from review.models import Review
 from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.db import transaction
+from django.core.exceptions import ValidationError
 from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category, Manufacturer
 from django.shortcuts import get_object_or_404, redirect, render
@@ -200,37 +202,54 @@ class CartView(ListView):
 
 class CreateOrderView(CreateView):
     model = Order
-    template_name = "shop/order_form.html"
-    fields = ["delivery_address"]
-    success_url = reverse_lazy("shopp:order_success")
+    template_name = "shop/checkout_order.html"
+    fields = ["full_name", "city", "delivery_address", "payment_method", "delivery_method"]
+    success_url = reverse_lazy("shop:order_success")
 
     def form_valid(self, form):
-        # Создаем заказ
         form.instance.user = self.request.user
-        cart = Cart.objects.get(user=self.request.user)
+        cart = get_object_or_404(Cart, user=self.request.user)
 
-        # Сохраняем заказ, чтобы получить его ID
-        order = form.save(commit=False)  # Не сохраняем еще в БД
-        order.total_price = 0  # Инициализируем общую цену
-        order.save()  # Сохраняем заказ
+        with transaction.atomic():
+            order = form.save(commit=False)
+            order.total_price = 0
+            order.save()
 
-        total_price = 0
-        for cart_item in cart.cartitem_set.all():
-            OrderItem.objects.create(order=order, product=cart_item.product, quantity=cart_item.quantity)
-            total_price += cart_item.product.price * cart_item.quantity
+            total_price = 0
 
-        order.total_price = total_price  # Обновляем общую цену заказа
-        order.save()  # Сохраняем заказ снова с обновленной ценой
+            for cart_item in cart.cartitem_set.all():
+                product = cart_item.product
 
-        # Очистка корзины после создания заказа
-        cart.cartitem_set.all().delete()
+                if product.stock < cart_item.quantity:
+                    raise ValidationError(
+                        f"Не хватает товара '{product.name}' на складе! Доступно: {product.stock} шт.")
+
+                product.stock -= cart_item.quantity
+                product.save()
+
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=cart_item.quantity
+                )
+
+                total_price += product.price * cart_item.quantity
+
+            order.total_price = total_price
+            order.save()
+            self.request.session['order_id'] = order.id
+
+            cart.cartitem_set.all().delete()
 
         return super().form_valid(form)
 
 
 class OrderSuccessView(View):
     def get(self, request):
-        return render(request, "shop/order_success.html")
+        order_id = request.session.get('order_id')
+        order = Order.objects.prefetch_related('items__product').get(id=order_id)
+        context = {'order': order}
+        return render(request, "shop/order_success.html", context)
 
 
 class OrdersListView(ListView):
