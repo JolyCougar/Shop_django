@@ -3,7 +3,7 @@ import json
 from django.contrib import messages
 from django_filters.views import FilterView
 from .filters import ProductFilter
-from review.forms import ReviewForm
+from review.forms import ReviewForm, ReplyForm
 from review.models import Review
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -79,6 +79,9 @@ class ProductsNewView(FilterView):
         return Product.objects.filter(new=True, archived=False)
 
 
+
+
+
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'shop/product_detail.html'
@@ -86,13 +89,9 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = self.get_object()
-
-        # Получаем все отзывы для этого товара, сортируем по дате (от новых к старым)
-        reviews = Review.objects.filter(product=product).order_by('-created_at')
-        context['reviews'] = reviews
-        context['form'] = ReviewForm()  # Форма для добавления отзыва
-
+        context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True)
+        context['review_form'] = ReviewForm()
+        context['reply_form'] = ReplyForm()
         return context
 
     def post(self, request, *args, **kwargs):

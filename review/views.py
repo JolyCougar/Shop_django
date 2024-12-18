@@ -1,31 +1,35 @@
-# from django.views.generic.edit import FormView
-# from django.shortcuts import get_object_or_404, redirect
-# from django.contrib import messages
-# from .models import Product, Review
-# from .forms import ReviewForm
+from django.views.generic import CreateView
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Product, Review
+from .forms import ReviewForm, ReplyForm
 
-# class AddReviewView(FormView):
-#     form_class = ReviewForm
-#
-#     def form_valid(self, form):
-#         product_id = self.kwargs.get('product_id')
-#         product = get_object_or_404(Product, id=product_id)
-#         user = self.request.user
-#
-#         # Проверка на дублирующий отзыв
-#         if Review.objects.filter(author=user, product=product).exists():
-#             messages.error(self.request, 'Вы уже оставили отзыв для этого товара.')
-#             return redirect('shop:product-detail', pk=product.id)
-#
-#         # Сохранение нового отзыва
-#         review = form.save(commit=False)
-#         review.author = user
-#         review.product = product
-#         review.save()
-#         messages.success(self.request, 'Ваш отзыв успешно добавлен!')
-#         return redirect('shop:product-detail', pk=product.id)
-#
-#     def form_invalid(self, form):
-#         product_id = self.kwargs.get('product_id')
-#         messages.error(self.request, 'Ошибка отправки формы. Проверьте введенные данные.')
-#         return redirect('shop:product-detail', pk=product_id)
+
+class AddReviewView(CreateView):
+    form_class = ReviewForm
+
+    def post(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, id=kwargs.get('product_id'))
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.author = request.user
+            review.product = product
+            review.save()
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'message': 'Неверные данные формы.'}, status=400)
+
+class AddReplyView(CreateView):
+    form_class = ReplyForm
+
+    def post(self, request, *args, **kwargs):
+        review = get_object_or_404(Review, id=kwargs.get('review_id'))
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.author = request.user
+            reply.product = review.product
+            reply.parent = review
+            reply.save()
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'message': 'Неверные данные формы.'}, status=400)
