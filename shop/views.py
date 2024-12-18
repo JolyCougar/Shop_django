@@ -79,9 +79,6 @@ class ProductsNewView(FilterView):
         return Product.objects.filter(new=True, archived=False)
 
 
-
-
-
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'shop/product_detail.html'
@@ -93,26 +90,6 @@ class ProductDetailView(DetailView):
         context['review_form'] = ReviewForm()
         context['reply_form'] = ReplyForm()
         return context
-
-    def post(self, request, *args, **kwargs):
-        product = self.get_object()
-        form = ReviewForm(request.POST)
-
-        if form.is_valid():
-            # Проверка на дублирующий отзыв
-            if Review.objects.filter(author=request.user, product=product).exists():
-                return redirect('shop:product-detail', pk=product.pk)
-
-            # Создаем и сохраняем новый отзыв
-            review = form.save(commit=False)
-            review.product = product
-            review.author = request.user  # Присваиваем автором текущего пользователя
-            review.save()
-
-            return redirect('shop:product-detail', pk=product.pk)  # Перенаправляем обратно на страницу товара
-
-        # Если форма не валидна, показываем ошибки и возвращаем на ту же страницу
-        return redirect('shop:product-detail', pk=product.pk)
 
 
 class AddToCartView(View):

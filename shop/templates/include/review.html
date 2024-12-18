@@ -45,7 +45,9 @@
                 <p>Оценка: {{ review_form.rating }}</p>
             </div>
             <textarea name="text" rows="4" required class="form-textarea"></textarea>
-            <p><button type="submit" class="btn">Добавить отзыв</button></p>
+            <p>
+                <button type="submit" class="btn">Добавить отзыв</button>
+            </p>
         </form>
     {% else %}
         <p><a href="{% url 'account:login' %}">Войдите</a>, чтобы оставить отзыв.</p>

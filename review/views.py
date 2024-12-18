@@ -19,6 +19,7 @@ class AddReviewView(CreateView):
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'message': 'Неверные данные формы.'}, status=400)
 
+
 class AddReplyView(CreateView):
     form_class = ReplyForm
 

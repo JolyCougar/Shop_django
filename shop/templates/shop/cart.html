@@ -40,11 +40,17 @@
                 </tbody>
             </table>
             <div class="cart-summary">
-                <h2>Итого: <span class="total-price">₽{{ total_price }}</span></h2>
-                <form method="POST" action="{% url 'shop:create_order' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn">Оформить заказ</button>
-                </form>
+
+                {% if user.is_authenticated %}
+                    <h2>Итого: <span class="total-price">₽{{ total_price }}</span></h2>
+                    <form method="POST" action="{% url 'shop:create_order' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Оформить заказ</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'account:login' %}" class="back-to-product-list-btn">Войдите, чтобы сделать заказ</a>
+                {% endif %}
+
             </div>
         {% else %}
             <p>Ваша корзина пуста.</p>
@@ -113,12 +119,12 @@
                             if (data.success) {
                                 updateTotal();
                             } else {
-                                alert(data.message);
+                                console.error(data.message);
                             }
                         })
                         .catch(error => {
                             console.error('Ошибка при обновлении количества:', error);
-                            alert('Не удалось обновить количество. Попробуйте снова.');
+                            console.error('Не удалось обновить количество. Попробуйте снова.');
                         });
                 });
             });
