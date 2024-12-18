@@ -31,7 +31,7 @@
                             <input type="number" value="{{ item.quantity }}" min="1" class="quantity"
                                    data-price="{{ item.product.price }}">
                         </td>
-                        <td class="item-total">{{ item.total_price }}₽</td>
+                        <td class="item-total">{{ item.product.discounted_price }}₽</td>
                         <td>
                             <button class="remove-from-cart" data-id="{{ item.product.id }}">Удалить</button>
                         </td>
@@ -54,7 +54,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const removeButtons = document.querySelectorAll('.remove-from-cart');
+            const quantityInputs = document.querySelectorAll('.quantity');
 
+            // Удаление товара из корзины
             removeButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     const itemId = this.getAttribute('data-id');
@@ -78,6 +80,50 @@
                 });
             });
 
+            // Изменение количества товаров
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    const itemId = this.closest('tr').getAttribute('data-item-id');
+                    const quantity = parseInt(this.value, 10);
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    const discount = parseFloat(
+                        this.closest('tr').querySelector('td:nth-child(3)').textContent.replace('%', '')
+                    ) / 100;
+
+                    if (quantity < 1 || isNaN(quantity)) {
+                        alert('Количество должно быть не менее 1');
+                        this.value = 1;
+                        return;
+                    }
+
+                    const itemTotal = this.closest('tr').querySelector('.item-total');
+                    const discountedPrice = price * (1 - discount);
+                    itemTotal.textContent = `${(discountedPrice * quantity).toFixed(2)}₽`;
+
+                    fetch(`/cart/update/${itemId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({quantity: quantity})
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateTotal();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при обновлении количества:', error);
+                            alert('Не удалось обновить количество. Попробуйте снова.');
+                        });
+                });
+            });
+
+            // Функция для обновления общей суммы
             const updateTotal = () => {
                 let total = 0;
                 document.querySelectorAll('.item-total').forEach(cell => {
@@ -87,4 +133,6 @@
             };
         });
     </script>
+
+
 {% endblock %}

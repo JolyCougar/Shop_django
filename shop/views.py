@@ -1,4 +1,5 @@
 import logging
+import json
 from django.contrib import messages
 from django_filters.views import FilterView
 from .filters import ProductFilter
@@ -143,6 +144,29 @@ class AddToCartView(View):
         return redirect("shop:cart_view")
 
 
+class UpdateCartView(View):
+    def post(self, request, item_id):
+        try:
+            data = json.loads(request.body)
+            quantity = int(data.get('quantity', 1))
+
+            if quantity < 1:
+                return JsonResponse({'success': False, 'message': 'Количество не может быть меньше 1.'})
+
+            cart_item = CartItem.objects.get(product_id=item_id, cart__user=request.user)
+            cart_item.quantity = quantity
+            cart_item.save()
+
+            return JsonResponse({'success': True, 'message': 'Количество обновлено.'})
+
+        except CartItem.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Товар не найден в корзине.'})
+        except ValueError:
+            return JsonResponse({'success': False, 'message': 'Некорректное значение количества.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ошибка: {str(e)}'})
+
+
 class CartItemDeleteView(View):
     def post(self, request, *args, **kwargs):
         product_id = self.kwargs["pk"]
@@ -191,7 +215,7 @@ class CartView(ListView):
 
         total_price = 0
         for item in cart_items:
-            item.total_price = item.product.price * item.quantity
+            item.total_price = item.product.discounted_price * item.quantity
             total_price += item.total_price
 
         context["cart_items"] = cart_items
