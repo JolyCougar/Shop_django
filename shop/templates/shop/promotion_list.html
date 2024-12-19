@@ -5,24 +5,24 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="section-title">Наши Акции</h1>
-    <div class="promotion-grid">
-        {% for promotion in promotions %}
-        <div class="promotion-card">
-            <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}" class="promotion-image">
-            <div class="promotion-content">
-                <h2 class="promotion-title">{{ promotion.name }}</h2>
-                <p class="promotion-description">{{ promotion.description }}</p>
-                <a href="{% url 'shop:promotion_detail' promotion.url %}" class="btn btn-detail">Подробнее</a>
-            </div>
+    <div class="container">
+        <h1 class="section-title">Наши Акции</h1>
+        <div class="promotion-grid">
+            {% for promotion in promotions %}
+                <div class="promotion-card">
+                    <img src="{{ promotion.image.url }}" alt="{{ promotion.name }}" class="promotion-image">
+                    <div class="promotion-content">
+                        <h2 class="promotion-title">{{ promotion.name }}</h2>
+                        <p class="promotion-description">{{ promotion.description }}</p>
+                        <a href="{% url 'shop:promotion_detail' promotion.url %}" class="btn btn-detail">Подробнее</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p>В данный момент акции отсутствуют. Следите за обновлениями!</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>В данный момент акции отсутствуют. Следите за обновлениями!</p>
-        {% endfor %}
+
+        {% include 'include/pagination.html' %}
+
     </div>
-
-{% include 'include/pagination.html' %}
-
-</div>
 {% endblock %}

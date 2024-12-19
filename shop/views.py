@@ -1,7 +1,7 @@
 import logging
 import json
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm, ReplyForm
@@ -249,7 +249,7 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class OrderSuccessView(LoginRequiredMixin,View):
+class OrderSuccessView(LoginRequiredMixin, View):
     def get(self, request):
         order_id = request.session.get('order_id')
         order = Order.objects.prefetch_related('items__product').get(id=order_id)
@@ -257,7 +257,7 @@ class OrderSuccessView(LoginRequiredMixin,View):
         return render(request, "shop/order_success.html", context)
 
 
-class OrdersListView(LoginRequiredMixin,ListView):
+class OrdersListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = "shop/orders_list.html"
     context_object_name = "orders"
@@ -293,18 +293,28 @@ class ProductSearchView(ListView):
         return context
 
 
-class ListProductAdminView(LoginRequiredMixin, ListView):
+class ListProductAdminView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = Product
     template_name = 'shop/profile_admin/product_list_admin.html'
     context_object_name = 'products'
     paginate_by = 10
 
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
-class ProductCreateView(LoginRequiredMixin,CreateView):
+
+class ProductCreateView(UserPassesTestMixin, LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'shop/profile_admin/product_form.html'
     success_url = reverse_lazy('account:product_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -327,11 +337,16 @@ class ProductCreateView(LoginRequiredMixin,CreateView):
             return self.form_invalid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'shop/profile_admin/product_form.html'
     success_url = reverse_lazy('account:product_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -354,51 +369,76 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
             return self.form_invalid(form)
 
 
-class ManufactureCreateAdminView(LoginRequiredMixin,CreateView):
+class ManufactureCreateAdminView(UserPassesTestMixin, LoginRequiredMixin, CreateView):
     model = Manufacturer
     form_class = ManufacturerForm
     template_name = 'shop/profile_admin/manufacturer_form.html'
     success_url = reverse_lazy('account:product_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def form_valid(self, form):
         messages.success(self.request, "Производитель успешно добавлен.")
         return super().form_valid(form)
 
 
-class CategoryCreateAdminView(LoginRequiredMixin,CreateView):
+class CategoryCreateAdminView(UserPassesTestMixin, LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'shop/profile_admin/category_form.html'
     success_url = reverse_lazy('account:product_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def form_valid(self, form):
         messages.success(self.request, "Категория успешно добавлена.")
         return super().form_valid(form)
 
 
-class MarketingListView(LoginRequiredMixin,ListView):
+class MarketingAdminListView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = Marketing
     template_name = 'shop/profile_admin/marketing_list.html'
     context_object_name = 'marketings'
     paginate_by = 10
 
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
-class MarketingCreateView(LoginRequiredMixin,CreateView):
+
+class MarketingAdminCreateView(UserPassesTestMixin, LoginRequiredMixin, CreateView):
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
     success_url = reverse_lazy('marketing_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def form_valid(self, form):
         messages.success(self.request, "Маркетинговая кампания успешно создана.")
         return super().form_valid(form)
 
 
-class MarketingUpdateView(LoginRequiredMixin,UpdateView):
+class MarketingAdminUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
     success_url = reverse_lazy('marketing_list')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
 
     def form_valid(self, form):
         messages.success(self.request, "Маркетинговая кампания успешно обновлена.")
