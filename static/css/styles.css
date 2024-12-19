@@ -1619,3 +1619,32 @@ label[for="avatarUpload"]:hover {
 .back-to-product-list-btn:hover {
     background-color: #00bfa5;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination span {
+    margin: 0 10px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: #6d3dab;
+    padding: 8px 12px;
+
+    border-radius: 4px; /* Закругленные углы */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #00bfa5; /* Цвет фона при наведении */
+    color: white; /* Цвет текста при наведении */
+}
+
+.pagination .current {
+    font-weight: bold; /* Жирный шрифт для текущей страницы */
+    color: #333; /* Цвет текста для текущей страницы */
+}

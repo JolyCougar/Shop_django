@@ -1,6 +1,7 @@
 import logging
 import json
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm, ReplyForm
@@ -34,6 +35,7 @@ class PromotionListView(ListView):
     template_name = "shop/promotion_list.html"
     context_object_name = "promotions"
     queryset = Marketing.objects.filter(archived=False)
+    paginate_by = 6
 
 
 class PromotionDetailView(DetailView):
@@ -49,6 +51,7 @@ class ProductListView(FilterView):
     filterset_class = ProductFilter
     template_name = "shop/product_list.html"
     queryset = Product.objects.filter(archived=False)
+    paginate_by = 10
 
 
 class ProductByCategoryView(FilterView):
@@ -56,6 +59,7 @@ class ProductByCategoryView(FilterView):
     template_name = "shop/product_list.html"
     filterset_class = ProductFilter
     context_object_name = "product_list"
+    paginate_by = 10
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")
@@ -74,6 +78,7 @@ class ProductsNewView(FilterView):
     template_name = 'shop/product_list.html'
     filterset_class = ProductFilter
     context_object_name = "product_list"
+    paginate_by = 10
 
     def get_queryset(self):
         return Product.objects.filter(new=True, archived=False)
@@ -200,7 +205,7 @@ class CartView(ListView):
         return context
 
 
-class CreateOrderView(CreateView):
+class CreateOrderView(LoginRequiredMixin, CreateView):
     model = Order
     template_name = "shop/checkout_order.html"
     fields = ["full_name", "city", "delivery_address", "payment_method", "delivery_method"]
@@ -244,7 +249,7 @@ class CreateOrderView(CreateView):
         return super().form_valid(form)
 
 
-class OrderSuccessView(View):
+class OrderSuccessView(LoginRequiredMixin,View):
     def get(self, request):
         order_id = request.session.get('order_id')
         order = Order.objects.prefetch_related('items__product').get(id=order_id)
@@ -252,7 +257,7 @@ class OrderSuccessView(View):
         return render(request, "shop/order_success.html", context)
 
 
-class OrdersListView(ListView):
+class OrdersListView(LoginRequiredMixin,ListView):
     model = Order
     template_name = "shop/orders_list.html"
     context_object_name = "orders"
@@ -267,7 +272,7 @@ class OrdersListView(ListView):
             return Order.objects.filter(complete=False)
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
     template_name = "shop/order_detail.html"
 
@@ -288,13 +293,14 @@ class ProductSearchView(ListView):
         return context
 
 
-class ListProductAdminView(ListView):
+class ListProductAdminView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'shop/profile_admin/product_list_admin.html'
     context_object_name = 'products'
+    paginate_by = 10
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin,CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'shop/profile_admin/product_form.html'
@@ -321,7 +327,7 @@ class ProductCreateView(CreateView):
             return self.form_invalid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'shop/profile_admin/product_form.html'
@@ -348,7 +354,7 @@ class ProductUpdateView(UpdateView):
             return self.form_invalid(form)
 
 
-class ManufactureCreateAdminView(CreateView):
+class ManufactureCreateAdminView(LoginRequiredMixin,CreateView):
     model = Manufacturer
     form_class = ManufacturerForm
     template_name = 'shop/profile_admin/manufacturer_form.html'
@@ -359,7 +365,7 @@ class ManufactureCreateAdminView(CreateView):
         return super().form_valid(form)
 
 
-class CategoryCreateAdminView(CreateView):
+class CategoryCreateAdminView(LoginRequiredMixin,CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'shop/profile_admin/category_form.html'
@@ -370,13 +376,14 @@ class CategoryCreateAdminView(CreateView):
         return super().form_valid(form)
 
 
-class MarketingListView(ListView):
+class MarketingListView(LoginRequiredMixin,ListView):
     model = Marketing
     template_name = 'shop/profile_admin/marketing_list.html'
     context_object_name = 'marketings'
+    paginate_by = 10
 
 
-class MarketingCreateView(CreateView):
+class MarketingCreateView(LoginRequiredMixin,CreateView):
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
@@ -387,7 +394,7 @@ class MarketingCreateView(CreateView):
         return super().form_valid(form)
 
 
-class MarketingUpdateView(UpdateView):
+class MarketingUpdateView(LoginRequiredMixin,UpdateView):
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
