@@ -12,7 +12,7 @@ from shop.models import Product, Cart, CartItem
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm, ProfileUpdateForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
-from .models import CustomUser, EmailVerification
+from .models import CustomUser, EmailVerification, UserSubscription
 from .services import EmailService, PasswordGenerator
 import logging
 
@@ -206,3 +206,19 @@ class PasswordRecoveryView(View):
             log.info(f"Произошла ошибка: {str(e)}")
 
         return redirect("account:login")
+
+
+class ManageSubscriptionView(LoginRequiredMixin, View):
+    template_name = 'account/subscription.html'
+
+    def get(self, request):
+        # Получение информации о подписке текущего пользователя
+        subscription, created = UserSubscription.objects.get_or_create(user=request.user)
+        return render(request, self.template_name, {'subscription': subscription})
+
+    def post(self, request):
+        # Переключение состояния подписки
+        subscription, created = UserSubscription.objects.get_or_create(user=request.user)
+        subscription.is_subscribed = not subscription.is_subscribed
+        subscription.save()
+        return redirect('account:manage_subscription')

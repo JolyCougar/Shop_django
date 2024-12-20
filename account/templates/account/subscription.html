@@ -1,0 +1,22 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Subscription
+{% endblock %}
+
+{% block content %}
+    <h1>Управление подпиской</h1>
+<p>Вы {{ subscription.is_subscribed|yesno:"подписаны,не подписаны" }} на уведомления об акциях.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">
+        {% if subscription.is_subscribed %}
+            Отписаться
+        {% else %}
+            Подписаться
+        {% endif %}
+    </button>
+</form>
+
+{% endblock %}

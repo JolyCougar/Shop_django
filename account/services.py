@@ -41,6 +41,20 @@ class EmailService:
         })
         send_email_task.delay(html_message, user.email, subject)
 
+    # @staticmethod
+    # def send_new_promotion(sender, instance, created, **kwargs):
+    #     if created:
+    #         subscribers = UserSubscription.objects.filter(is_subscribed=True)
+    #         for subscription in subscribers:
+    #             subject = f'MyShop: У нас новая акция{instance.name}!'
+    #             html_message = render_to_string('account/email/messages_to_new_password.html', {
+    #                 'user_name': subscription.user.username,
+    #
+    #             })
+    #             print(instance)
+
+            # send_email_task.delay(html_message, user.email, subject)
+
 
 class PasswordGenerator:
     """

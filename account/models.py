@@ -24,3 +24,11 @@ class CustomUser(AbstractUser):
 class EmailVerification(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     token = models.UUIDField(default=uuid.uuid4, editable=False)
+
+
+class UserSubscription(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    is_subscribed = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username} ({'Подписан' if self.is_subscribed else 'Не подписан'})"
