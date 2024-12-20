@@ -1,7 +1,10 @@
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
-
+from shop.models import Marketing
+from django.db.models.signals import post_save
+from .services import EmailService
+from .models import UserSubscription
 from shop.models import Cart, CartItem, Product
 
 
@@ -24,3 +27,10 @@ def transfer_cart_to_user(sender, request, user, **kwargs):
 
         # Очищаем сессию после переноса товаров
         del request.session['cart']
+
+
+@receiver(post_save, sender=Marketing)
+def notify_users_about_promotion(sender, instance, created, **kwargs):
+    if created:
+        subscribers = UserSubscription.objects.filter(is_subscribed=True).select_related('user')
+        EmailService.send_new_promotion(subscribers, instance)

@@ -4,6 +4,10 @@
     Subscription
 {% endblock %}
 
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
 {% block content %}
     <h1>Управление подпиской</h1>
 <p>Вы {{ subscription.is_subscribed|yesno:"подписаны,не подписаны" }} на уведомления об акциях.</p>

@@ -417,7 +417,7 @@ class MarketingAdminCreateView(UserPassesTestMixin, LoginRequiredMixin, CreateVi
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
-    success_url = reverse_lazy('marketing_list')
+    success_url = reverse_lazy('shop:marketing_list_admin')
 
     def test_func(self):
         if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
@@ -433,7 +433,7 @@ class MarketingAdminUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateVi
     model = Marketing
     form_class = MarketingForm
     template_name = 'shop/profile_admin/marketing_form.html'
-    success_url = reverse_lazy('marketing_list')
+    success_url = reverse_lazy('shop:marketing_list_admin')
 
     def test_func(self):
         if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:

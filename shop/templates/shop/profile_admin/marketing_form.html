@@ -39,7 +39,7 @@
                 Редактировать промо-акцию
             {% endif %}
         </h1>
-        <p><a href="{% url 'shop:product_list_admin' %}" class="back-to-product-list-btn">Назад к списку товаров</a></p>
+        <p><a href="{% url 'shop:marketing_list_admin' %}" class="back-to-product-list-btn">Назад к списку промо акций</a></p>
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
