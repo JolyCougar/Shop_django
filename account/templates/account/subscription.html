@@ -10,17 +10,27 @@
 
 {% block content %}
     <h1>Управление подпиской</h1>
-<p>Вы {{ subscription.is_subscribed|yesno:"подписаны,не подписаны" }} на уведомления об акциях.</p>
+    {% if user.email_verified %}
+        <p>Вы {{ subscription.is_subscribed|yesno:"подписаны,не подписаны" }} на уведомления об акциях.</p>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">
-        {% if subscription.is_subscribed %}
-            Отписаться
-        {% else %}
-            Подписаться
-        {% endif %}
-    </button>
-</form>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">
+                {% if subscription.is_subscribed %}
+                    Отписаться
+                {% else %}
+                    Подписаться
+                {% endif %}
+            </button>
+        </form>
+    {% else %}
+        <p> Пожалуйста, подтвердите E-mail !</p>
+        <form method="post" action="{% url 'account:resend_email_confirmation' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-resend-confirmation">Отправить подтверждение</button>
+        </form>
+
+    {% endif %}
+
 
 {% endblock %}

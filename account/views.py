@@ -222,3 +222,12 @@ class ManageSubscriptionView(LoginRequiredMixin, View):
         subscription.is_subscribed = not subscription.is_subscribed
         subscription.save()
         return redirect('account:manage_subscription')
+
+
+class ResendEmailConfirmationView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if not user.email_verified:
+            EmailService.send_verification_email(request, user)
+            messages.success(request, "Письмо с подтверждением отправлено повторно.")
+        return redirect('account:profile')

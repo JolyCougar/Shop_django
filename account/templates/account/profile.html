@@ -16,13 +16,23 @@
             {% else %}
                 <p>Аватар не установлен</p>
             {% endif %}
-
         </div>
         <div class="profile-details">
             <h2>Пользователь: {{ user.username }}</h2>
             <p><strong>Имя:</strong> {{ user.first_name }}</p>
             <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
-            <p><strong>E-mail:</strong> {{ user.email }}</p>
+            <p>
+                <strong>E-mail:</strong> {{ user.email }}
+                {% if not user.email_verified %}
+                    <span class="email-status email-unverified"> (Не подтвержден)</span>
+                    <form method="post" action="{% url 'account:resend_email_confirmation' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-resend-confirmation">Отправить подтверждение</button>
+                    </form>
+                {% else %}
+                    <span class="email-status email-verified"> (Подтвержден)</span>
+                {% endif %}
+            </p>
             <p><strong>О себе:</strong> {{ user.bio }}</p>
             <a href="{% url 'account:update-profile' %}">
                 <button class="btn-edit-profile">Изменить профиль</button>

@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (RegisterView, CustomLoginView, CustomLogoutView,
                     ProfileView, CustomPasswordChangeView, ChangeProfileInfoView,
                     ClearAvatarView, ManageUsersView, VerifyEmailView,
-                    PasswordRecoveryView, ManageSubscriptionView)
+                    PasswordRecoveryView, ManageSubscriptionView, ResendEmailConfirmationView)
 
 app_name = 'account'
 
@@ -17,6 +17,7 @@ urlpatterns = [
     path('profile/manage-users/', ManageUsersView.as_view(), name='manage_users'),
     path('verify-email/<uuid:token>/', VerifyEmailView.as_view(), name='verify_email'),
     path('password-recovery/', PasswordRecoveryView.as_view(), name='password_recovery'),
-path('subscription/', ManageSubscriptionView.as_view(), name='manage_subscription'),
+    path('subscription/', ManageSubscriptionView.as_view(), name='manage_subscription'),
+    path('resend-email-confirmation/', ResendEmailConfirmationView.as_view(), name='resend_email_confirmation'),
 
 ]
