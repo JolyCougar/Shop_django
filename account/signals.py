@@ -31,6 +31,7 @@ def transfer_cart_to_user(sender, request, user, **kwargs):
 
 @receiver(post_save, sender=Marketing)
 def notify_users_about_promotion(sender, instance, created, **kwargs):
-    if created:
+    request = kwargs.get('request')
+    if created and request:
         subscribers = UserSubscription.objects.filter(is_subscribed=True).select_related('user')
-        EmailService.send_new_promotion(subscribers, instance)
+        EmailService.send_new_promotion(subscribers, instance, request)

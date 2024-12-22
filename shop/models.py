@@ -133,6 +133,3 @@ class Marketing(models.Model):
         if not self.url:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse('shop:promotion_detail', args=[str(self.id)])

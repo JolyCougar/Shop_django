@@ -3,6 +3,7 @@ from .models import EmailVerification
 from django.template.loader import render_to_string
 from .tasks import send_email_task
 from django.urls import reverse
+from django.contrib.sites.models import Site
 import random
 import string
 import logging
@@ -42,14 +43,20 @@ class EmailService:
         send_email_task.delay(html_message, user.email, subject)
 
     @staticmethod
-    def send_new_promotion(subscribers, instance):
+    def send_new_promotion(subscribers, instance, request):
         users_list = subscribers
+
+        promotion_link = request.build_absolute_uri(
+            reverse('shop:promotion_detail', args=[instance.url])
+        )
+
         for subscription in users_list:
             user = subscription.user
             subject = f'MyShop: У нас новая акция {instance.name}!'
             html_message = render_to_string('account/email/new_promotion.html', {
                 'user_name': subscription.user.username,
                 'promotion_name': instance.name,
+                'link': promotion_link
 
             })
 

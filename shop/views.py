@@ -6,6 +6,7 @@ from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm, ReplyForm
 from review.models import Review
+from django.db.models.signals import post_save
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.db import transaction
@@ -425,8 +426,10 @@ class MarketingAdminCreateView(UserPassesTestMixin, LoginRequiredMixin, CreateVi
         return False
 
     def form_valid(self, form):
+        response = super().form_valid(form)
+        post_save.send(sender=Marketing, instance=self.object, created=True, request=self.request)
         messages.success(self.request, "Маркетинговая кампания успешно создана.")
-        return super().form_valid(form)
+        return response
 
 
 class MarketingAdminUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):

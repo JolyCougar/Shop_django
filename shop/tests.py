@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Category, Manufacturer, Product, Orders, Cart, CartItem
+from .models import Category, Manufacturer, Product, Order, Cart, CartItem
 
 
 class CategoryModelTest(TestCase):
@@ -51,7 +51,7 @@ class OrdersModelTest(TestCase):
             price=799.99,
             stock=50
         )
-        self.order = Orders.objects.create(
+        self.order = Order.objects.create(
             user=self.user,
             delivery_address="123 Test St",
             status="В обработке"
