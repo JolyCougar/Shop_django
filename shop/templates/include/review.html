@@ -1,7 +1,7 @@
 <div id="reviews-tab" class="tab-pane" style="margin-top: 20px; width: 900px">
     <div id="reviews">
         {% for review in reviews %}
-            <div class="review">
+            <div class="review" id="review-{{ review.id }}">
                 <div class="review-header">
                     {% if review.author.avatar %}
                         <img src="{{ review.author.avatar.url }}" alt="Avatar" class="review-avatar">
@@ -13,6 +13,34 @@
                 </div>
                 <p><strong>Рейтинг:</strong> {{ review.rating.value }}/5</p>
                 <p>{{ review.text }}</p>
+
+                <!-- Кнопка редактирования только для отзыва пользователя -->
+                {% if user.is_authenticated and review.author.id == user.id %}
+                    <button class="btn" data-review-id="{{ review.id }}"
+                            data-url="{% url 'review:edit_review' review.id %}">
+                        Редактировать
+                    </button>
+                    <!-- Форма для редактирования отзыва (изначально скрыта) -->
+                    <form method="post" class="review-form" style="display: none;">
+                        {% csrf_token %}
+                        <div>
+                            <label for="rating">Оценка:</label>
+                            <select name="rating" required>
+                                <option value="">Выберите оценку</option>
+                                <option value="1" {% if review.rating.value == 1 %}selected{% endif %}>1</option>
+                                <option value="2" {% if review.rating.value == 2 %}selected{% endif %}>2</option>
+                                <option value="3" {% if review.rating.value == 3 %}selected{% endif %}>3</option>
+                                <option value="4" {% if review.rating.value == 4 %}selected{% endif %}>4</option>
+                                <option value="5" {% if review.rating.value == 5 %}selected{% endif %}>5</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="text">Комментарий:</label>
+                            <textarea name="text" rows="4" required class="form-textarea">{{ review.text }}</textarea>
+                        </div>
+                        <button type="submit" class="btn">Сохранить изменения</button>
+                    </form>
+                {% endif %}
 
                 <!-- Ответы -->
                 {% for reply in review.replies.all %}
@@ -36,25 +64,40 @@
         {% endfor %}
     </div>
 
-    <!-- Добавление отзыва -->
+    <!-- Форма для добавления отзыва, если пользователь еще не оставил отзыв для этого продукта -->
     {% if user.is_authenticated %}
-        <h2 class="add-review-title">Добавить отзыв</h2>
-        <form method="post" action="{% url 'review:add_review' product.id %}" class="review-form">
-            {% csrf_token %}
-            <div class="dropdown">
-                <p>Оценка: {{ review_form.rating }}</p>
+        {% if not user_review %}
+            <div id="add-review">
+                <h3>Добавить отзыв</h3>
+                <form method="post" action="{% url 'review:add_review' product.id %}">
+                    {% csrf_token %}
+                    <div>
+                        <label for="rating">Оценка:</label>
+                        <select name="rating" required>
+                            <option value="">Выберите оценку</option>
+                            {% for rating in ratings %}
+                                <option value="{{ rating.id }}">
+                                    {{ rating.value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="text">Комментарий:</label>
+                        <textarea name="text" rows="4" required class="form-textarea"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Оставить отзыв</button>
+                </form>
             </div>
-            <textarea name="text" rows="4" required class="form-textarea"></textarea>
-            <p>
-                <button type="submit" class="btn">Добавить отзыв</button>
-            </p>
-        </form>
+        {% else %}
+            <p>Вы уже оставили отзыв для этого продукта.</p>
+        {% endif %}
     {% else %}
         <p><a href="{% url 'account:login' %}">Войдите</a>, чтобы оставить отзыв.</p>
     {% endif %}
 </div>
 
-<!-- CSS -->
+<!-- CSS для стилей -->
 <style>
     #reviews-tab {
         margin-top: 20px;
@@ -98,14 +141,11 @@
 
     .review-form {
         margin-top: 10px;
-    }
-
-    .reply-form {
-        margin-top: 10px;
+        display: none; /* Скрыта по умолчанию */
     }
 
     .form-textarea {
-        width: 800px;
+        width: 100%;
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
@@ -127,48 +167,59 @@
         background-color: #0056b3;
     }
 
-    .dropdown {
-        position: relative;
-        width: 200px;
+    #add-review {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
     }
 
-    .dropdown-list li {
-        padding: 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-    }
-
-    .dropdown-list li:hover {
-        background-color: #f0f0f0;
-    }
-
-    .add-review-title {
-        margin-top: 30px;
-        font-size: 1.5em;
-        font-weight: bold;
+    #add-review h3 {
+        margin-bottom: 10px;
     }
 </style>
 
-<!-- JavaScript -->
+<!-- JavaScript для логики -->
 <script>
-    // AJAX для добавления отзыва
-    document.querySelectorAll('.review-form').forEach(form => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            fetch(this.action, {
-                method: 'POST',
-                headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                body: new FormData(this)
-            }).then(response => response.json()).then(data => {
-                if (data.success) {
-                    alert('Отзыв добавлен!');
-                    location.reload();
-                } else {
-                    alert('Ошибка: ' + data.message);
-                }
-            }).catch(error => {
-                alert('Ошибка: ' + error);
-            });
+    // Обработчик для кнопки редактирования
+    document.querySelectorAll('.btn[data-review-id]').forEach(button => {
+        button.addEventListener('click', function () {
+            const reviewId = this.getAttribute('data-review-id');
+            const url = this.getAttribute('data-url'); // Получаем URL для редактирования из атрибута data-url
+
+            // Получаем элемент отзыва по ID
+            const reviewElement = document.getElementById('review-' + reviewId);
+            const reviewForm = reviewElement.querySelector('.review-form');
+
+            // Выполняем GET-запрос для получения данных отзыва по правильному URL
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Заполняем текстовое поле текущими данными
+                        reviewForm.querySelector('textarea[name="text"]').value = data.review.text;
+
+                        // Заполняем рейтинг
+                        reviewForm.querySelector('select[name="rating"]').value = data.review.rating;
+
+                        // Обновляем действие формы на отправку данных редактирования
+                        reviewForm.action = url;
+
+                        // Показываем форму редактирования
+                        reviewForm.style.display = 'block';
+                    } else {
+                        alert('Ошибка: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при получении данных отзыва:', error);
+                    alert('Произошла ошибка при загрузке данных для редактирования.');
+                });
         });
     });
 </script>
