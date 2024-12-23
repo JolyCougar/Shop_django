@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm, ReplyForm
-from review.models import Review, Rating
+from review.models import Review, Rating, RatingStar
 from django.db.models import Avg
 from django.db.models.signals import post_save
 from django.http import JsonResponse
@@ -100,7 +100,14 @@ class ProductDetailView(DetailView):
         context['avg_rating'] = avg_rating
         context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True)
         context['review_form'] = ReviewForm()
-        context['user_review'] = Review.objects.filter(product=self.object, author=self.request.user).first()
+
+        user = self.request.user
+        if user.is_authenticated:
+            context['user_review'] = Review.objects.filter(product=self.object, author=user).first()
+        else:
+            context['user_review'] = None
+
+        context['ratings'] = RatingStar.objects.all()
 
         return context
 

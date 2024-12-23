@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from .models import Product, Review, Rating, RatingStar
 from .forms import ReviewForm, ReplyForm
 
@@ -42,7 +42,7 @@ class AddReviewView(CreateView):
                 rating = Rating(user=request.user, star=rating_value, product=product)
                 rating.save()
 
-            return JsonResponse({'success': True})
+            return redirect('shop:product-detail', pk=review.product.id)
 
         return JsonResponse({'success': False, 'message': 'Неверные данные формы.'}, status=400)
 
@@ -60,7 +60,7 @@ class AddReplyView(CreateView):
             reply.parent = review
             reply.save()
 
-            return JsonResponse({'success': True, 'message': 'Ответ успешно добавлен!'})
+            return redirect('shop:product-detail', pk=review.product.id)
 
         return JsonResponse({
             'success': False,
@@ -115,11 +115,5 @@ class EditReviewView(UpdateView):
                     rating_instance.save()
             updated_review = form.save()
 
-            return JsonResponse({
-                'success': True,
-                'review': {
-                    'text': updated_review.text,
-                    'rating': updated_review.rating.id,
-                }
-            })
+            return redirect('shop:product-detail', pk=review.product.id)
         return JsonResponse({'success': False, 'message': 'Неверные данные формы.'})
