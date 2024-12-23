@@ -5,7 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
 from .filters import ProductFilter
 from review.forms import ReviewForm, ReplyForm
-from review.models import Review
+from review.models import Review, Rating
+from django.db.models import Avg
 from django.db.models.signals import post_save
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -92,6 +93,9 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        avg_rating = Rating.objects.filter(product=self.object).aggregate(Avg('star__value'))['star__value__avg']
+        avg_rating = avg_rating if avg_rating is not None else 0
+        context['avg_rating'] = avg_rating
         context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True)
         context['review_form'] = ReviewForm()
         context['reply_form'] = ReplyForm()

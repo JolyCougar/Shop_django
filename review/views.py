@@ -1,7 +1,7 @@
 from django.views.generic import CreateView
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from .models import Product, Review
+from .models import Product, Review, Rating
 from .forms import ReviewForm, ReplyForm
 
 
@@ -16,6 +16,11 @@ class AddReviewView(CreateView):
             review.author = request.user
             review.product = product
             review.save()
+
+            rating_value = form.cleaned_data['rating']
+            rating = Rating(user=request.user, star=rating_value, product=product)
+            rating.save()
+
             return JsonResponse({'success': True})
         return JsonResponse({'success': False, 'message': 'Неверные данные формы.'}, status=400)
 

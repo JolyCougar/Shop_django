@@ -1021,6 +1021,7 @@ button:focus {
 
 .promotion-image {
     max-width: 100%; /* Масштабируем изображение по ширине контейнера */
+    height: 250px;
     border-radius: 10px; /* Радиус для скругления углов */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Добавляем тень */
 }

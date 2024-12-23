@@ -1,7 +1,6 @@
 from decimal import Decimal
 from django.utils.text import slugify
 from django.db import models
-from django.urls import reverse
 from shopSite.settings import AUTH_USER_MODEL
 
 
@@ -67,8 +66,8 @@ class Product(models.Model):
             self.discounted_price = self.price - discount_amount
         else:
             self.discounted_price = self.price
-
         super().save(*args, **kwargs)
+
 
 
 class ProductImage(models.Model):
