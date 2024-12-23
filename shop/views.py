@@ -93,12 +93,19 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Получаем средний рейтинг для продукта
         avg_rating = Rating.objects.filter(product=self.object).aggregate(Avg('star__value'))['star__value__avg']
         avg_rating = avg_rating if avg_rating is not None else 0
+
+        # Добавляем данные в контекст
         context['avg_rating'] = avg_rating
         context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True)
         context['review_form'] = ReviewForm()
-        context['reply_form'] = ReplyForm()
+
+        # Проверяем, оставил ли пользователь отзыв
+        context['user_review'] = Review.objects.filter(product=self.object, author=self.request.user).first()
+
         return context
 
 
