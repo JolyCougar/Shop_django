@@ -227,6 +227,11 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("shop:order_success")
 
     def form_valid(self, form):
+
+        return response
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
         form.instance.user = self.request.user
         cart = get_object_or_404(Cart, user=self.request.user)
 
@@ -260,8 +265,9 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
             self.request.session['order_id'] = order.id
 
             cart.cartitem_set.all().delete()
-
-        return super().form_valid(form)
+        post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
+        messages.success(self.request, "Сделан новый заказ.")
+        return response
 
 
 class OrderSuccessView(LoginRequiredMixin, View):

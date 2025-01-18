@@ -62,6 +62,19 @@ class EmailService:
 
             send_email_task.delay(html_message, user.email, subject)
 
+    @staticmethod
+    def send_info_new_order(users, instance):
+        users_list = users
+
+        for subscription in users_list:
+            user = subscription.user
+            subject = f'MyShop: У нас новый заказ {instance.pk}!'
+            html_message = render_to_string('account/email/messages_new_order.html', {
+                'user_name': subscription.user.username,
+                'order_number': instance.pk,
+            })
+            send_email_task.delay(html_message, user.email, subject)
+
 
 class PasswordGenerator:
     """
