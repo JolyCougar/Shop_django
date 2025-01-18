@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet
+from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet, OrderStatusForm
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category, Manufacturer
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
@@ -468,8 +468,23 @@ class OrdersAdminListView(LoginRequiredMixin, ListView):
     context_object_name = "orders"
 
     def get_queryset(self):
-        return Order.objects.filter(complete=False)
+        return Order.objects.filter(complete=False).all()
 
-# class OrdersUpdateAdminListView(LoginRequiredMixin, ListView):
-#     model = Order
-#
+
+class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateView):
+    model = Order
+    form_class = OrderStatusForm
+    template_name = "shop/profile_admin/order_update_status.html"
+    success_url = reverse_lazy('shop:orders_list_admin')
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
+
+    def form_valid(self, form):
+        order = self.get_object()
+        order.status = form.cleaned_data.get('status', order.status)
+        order.complete = form.cleaned_data.get('complete', order.complete)
+        order.save()
+        return super().form_valid(form)

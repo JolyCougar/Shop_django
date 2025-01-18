@@ -34,6 +34,7 @@
                             <td>{{ order.status }}</td>
                             <td>{{ order.total_price }} руб.</td>
                             <td><a href="{% url 'shop:order_detail' order.id %}" class="view-details">Просмотреть</a>
+                            <a href="{% url 'shop:orders_update_status' order.id %}" class="view-details">Изменить</a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -1,0 +1,43 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Обновление статуса заказа
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="product-form-container">
+        <h1>
+            Обновление статуса
+        </h1>
+        <p><a href="{% url 'shop:orders_list_admin' %}" class="back-to-product-list-btn">Назад к списку заказов</a></p>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <!-- Статус заказа -->
+            <div class="product-form-group">
+                <label for="{{ form.status.id_for_label }}">Статус</label>
+                {{ form.status|add_class:"product-form-control" }}
+                {{ form.status.errors }}
+            </div>
+            
+            <!-- Доставленный товар -->
+            <div class="product-form-group">
+                <label for="{{ form.complete.id_for_label }}">Товар доставлен</label>
+                <input type="checkbox" name="complete" id="{{ form.complete.id_for_label }}"
+                       class="product-form-check-input" {% if form.complete.value %}checked{% endif %}>
+                {{ form.complete.errors }}
+            </div>
+
+            <!-- Кнопка отправки формы -->
+            <button type="submit" class="product-form-button">Сохранить</button>
+        </form>
+    </div>
+
+{% endblock %}

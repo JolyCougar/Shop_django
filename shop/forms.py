@@ -1,7 +1,6 @@
 from django import forms
 from django.forms.models import inlineformset_factory
-from .models import Product, Manufacturer, Category, Marketing, ProductImage
-
+from .models import Product, Manufacturer, Category, Marketing, ProductImage, Order
 
 
 class ProductForm(forms.ModelForm):
@@ -75,3 +74,9 @@ class MarketingForm(forms.ModelForm):
         if Marketing.objects.filter(url=url).exists():
             raise forms.ValidationError("URL должен быть уникальным.")
         return url
+
+
+class OrderStatusForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ["status", "complete"]
