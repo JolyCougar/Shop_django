@@ -3,7 +3,6 @@ from .models import EmailVerification
 from django.template.loader import render_to_string
 from .tasks import send_email_task
 from django.urls import reverse
-from django.contrib.sites.models import Site
 import random
 import string
 import logging

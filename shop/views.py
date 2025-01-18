@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
 from .filters import ProductFilter
-from review.forms import ReviewForm, ReplyForm
+from review.forms import ReviewForm
 from review.models import Review, Rating, RatingStar
 from django.db.models import Avg
 from django.db.models.signals import post_save
@@ -225,10 +225,6 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
     template_name = "shop/checkout_order.html"
     fields = ["full_name", "city", "delivery_address", "payment_method", "delivery_method"]
     success_url = reverse_lazy("shop:order_success")
-
-    def form_valid(self, form):
-
-        return response
 
     def form_valid(self, form):
         response = super().form_valid(form)
