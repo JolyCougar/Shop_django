@@ -460,3 +460,16 @@ class MarketingAdminUpdateView(UserPassesTestMixin, LoginRequiredMixin, UpdateVi
     def form_valid(self, form):
         messages.success(self.request, "Маркетинговая кампания успешно обновлена.")
         return super().form_valid(form)
+
+
+class OrdersAdminListView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = "shop/profile_admin/orders_list_admin.html"
+    context_object_name = "orders"
+
+    def get_queryset(self):
+        return Order.objects.filter(complete=False)
+
+# class OrdersUpdateAdminListView(LoginRequiredMixin, ListView):
+#     model = Order
+#

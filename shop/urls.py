@@ -6,7 +6,7 @@ from .views import (ProductListView, ProductDetailView, AddToCartView,
                     ProductsNewView, ProductSearchView, ProductCreateView,
                     ProductUpdateView, ListProductAdminView, ManufactureCreateAdminView,
                     CategoryCreateAdminView, MarketingAdminCreateView, MarketingAdminListView,
-                    MarketingAdminUpdateView, UpdateCartView)
+                    MarketingAdminUpdateView, UpdateCartView,OrdersAdminListView)
 
 app_name = 'shop'
 
@@ -28,6 +28,7 @@ urlpatterns = [
     path('promotion/<slug:slug>/', PromotionDetailView.as_view(), name='promotion_detail'),
     path('search/', ProductSearchView.as_view(), name='product_search'),
     path('profile/products/', ListProductAdminView.as_view(), name='product_list_admin'),
+    path('profile/orders/', OrdersAdminListView.as_view(), name='orders_list_admin'),
     path('profile/product/create/', ProductCreateView.as_view(), name='product_create_admin'),
     path('profile/product/<int:pk>/edit/', ProductUpdateView.as_view(), name='product_update_admin'),
     path('profile/category/create/', CategoryCreateAdminView.as_view(), name='category_create_admin'),

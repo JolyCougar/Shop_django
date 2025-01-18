@@ -1,0 +1,49 @@
+{% extends 'include/base.html' %}
+{% load add_class %}
+{% block title %}
+    Список сделанных заказов
+{% endblock %}
+
+{% block filters %}
+    {% include 'include/profile_menu.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container profile">
+        <h1>Заказы</h1>
+
+        <div class="profile-orders">
+            {% if orders %}
+                <table class="orders-table">
+                    <thead>
+                    <tr>
+                        <th>Заказ #</th>
+                        <th>Пользователь</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Сумма</th>
+                        <th>Детали</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.user.username }}</td>
+                            <td>{{ order.order_date|date:"d.m.Y H:i" }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.total_price }} руб.</td>
+                            <td><a href="{% url 'shop:order_detail' order.id %}" class="view-details">Просмотреть</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Нет заказов.</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
