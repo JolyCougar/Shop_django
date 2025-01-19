@@ -1,5 +1,11 @@
 import logging
 import json
+
+import uuid
+
+from yookassa import Configuration, Payment
+from decouple import config
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
@@ -8,8 +14,8 @@ from review.forms import ReviewForm
 from review.models import Review, Rating, RatingStar
 from django.db.models import Avg
 from django.db.models.signals import post_save
-from django.http import JsonResponse
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet, OrderStatusForm
@@ -227,14 +233,13 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("shop:order_success")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         form.instance.user = self.request.user
         cart = get_object_or_404(Cart, user=self.request.user)
 
         with transaction.atomic():
             order = form.save(commit=False)
-            order.total_price = 0
             order.save()
+            order.total_price = 0
 
             total_price = 0
 
@@ -261,13 +266,38 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
             self.request.session['order_id'] = order.id
 
             cart.cartitem_set.all().delete()
-        post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
+            payment_url = self.get_payment_url(order, self.request)
+        # post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
         messages.success(self.request, "Сделан новый заказ.")
-        return response
+
+        return HttpResponseRedirect(payment_url)
+
+    def get_payment_url(self, order, request):
+        return_link = request.build_absolute_uri(
+                reverse('shop:order_success'))
+        payment = Payment.create({
+            "amount": {
+                "value": order.total_price,
+                "currency": "RUB",
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": return_link,
+            },
+            "capture": True,
+            "description": f"Заказ № {order.pk}"
+        }, uuid.uuid4())
+        if payment["status"] == "pending":
+            payment_link = payment["confirmation"]["confirmation_url"]
+            return payment_link
+        else:
+            messages.error(self.request, "Ошибка при создании платежа. Попробуйте еще раз.")
+            return reverse_lazy("shop:order_failure")
 
 
 class OrderSuccessView(LoginRequiredMixin, View):
     def get(self, request):
+        # Необходимо добавить проверку оплачен ли заказ и если да, то в заказе поменять флаг paid
         order_id = request.session.get('order_id')
         order = Order.objects.prefetch_related('items__product').get(id=order_id)
         context = {'order': order}
@@ -490,3 +520,6 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         order.complete = form.cleaned_data.get('complete', order.complete)
         order.save()
         return super().form_valid(form)
+
+
+

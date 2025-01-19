@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
-
+from yookassa import Configuration
 
 from django.urls import reverse_lazy
 
@@ -158,3 +158,5 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
+Configuration.account_id = config("SHOP_ID_SECRET_KEY")
+Configuration.secret_key = config("SHOP_MONEY_SECRET_KEY")
