@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from shop.models import Marketing
 from django.db.models.signals import post_save
 from .services import EmailService
-from .models import UserSubscription
+from .models import UserSubscription, CustomUser
 from shop.models import Cart, CartItem, Product, Order
 from django.contrib.auth.models import User, Group
 
@@ -35,7 +35,7 @@ def notify_users_about_promotion(sender, instance, created, **kwargs):
     request = kwargs.get('request')
     if created and request:
         subscribers = UserSubscription.objects.filter(is_subscribed=True).select_related('user')
-        EmailService.send_new_promotion(subscribers, instance, request)
+        # EmailService.send_new_promotion(subscribers, instance, request)
 
 
 @receiver(post_save, sender=Order)
@@ -43,6 +43,6 @@ def notify_users_about_promotion(sender, instance, created, **kwargs):
     request = kwargs.get('request')
     if created and request:
         moderator_group = Group.objects.get(name='Модераторы')
-        users = User.objects.filter(is_superuser=True) | User.objects.filter(groups=moderator_group)
+        users = CustomUser.objects.filter(is_superuser=True) | CustomUser.objects.filter(groups=moderator_group)
         user_list = list(users)
-        EmailService.send_info_new_order(user_list, instance)
+        # EmailService.send_info_new_order(user_list, instance)

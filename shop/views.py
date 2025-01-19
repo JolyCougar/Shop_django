@@ -267,7 +267,7 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
 
             cart.cartitem_set.all().delete()
             payment_url = self.get_payment_url(order, self.request)
-        # post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
+        post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
         messages.success(self.request, "Сделан новый заказ.")
         if order.payment_method == "Онлайн":
             return HttpResponseRedirect(payment_url)
@@ -286,7 +286,7 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
                 "return_url": return_link,
             },
             "capture": True,
-            "description": f"Заказ № {order.pk} by {order.user.username}"
+            "description": f"Заказ № {order.pk} от пользователя {order.user.username}"
         }, uuid.uuid4())
         if payment["status"] == "pending":
             payment_link = payment["confirmation"]["confirmation_url"]
