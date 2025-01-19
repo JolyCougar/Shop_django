@@ -39,7 +39,18 @@
                 <th style="border: 1px solid #ddd; padding: 10px; background-color: #f0f0f0; text-align: left;">Сумма
                     заказа
                 </th>
-                <td style="border: 1px solid #ddd; padding: 10px;">₽{{ order.total_price }}</td>
+                <td style="border: 1px solid #ddd; padding: 10px;">{{ order.total_price }}₽</td>
+            </tr>
+             <tr>
+                <th style="border: 1px solid #ddd; padding: 10px; background-color: #f0f0f0; text-align: left;">Статус оплаты
+                    заказа
+                </th>
+                 {% if order.paid %}
+                 	<td style="border: 1px solid #ddd; padding: 10px;">Оплаченно</td>
+                     {% else %}
+                     <td style="border: 1px solid #ddd; padding: 10px;">Не оплачено</td>
+                 {% endif %} 
+                
             </tr>
         </table>
 

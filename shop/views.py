@@ -269,8 +269,9 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
             payment_url = self.get_payment_url(order, self.request)
         # post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
         messages.success(self.request, "Сделан новый заказ.")
-
-        return HttpResponseRedirect(payment_url)
+        if order.payment_method == "Онлайн":
+            return HttpResponseRedirect(payment_url)
+        return HttpResponseRedirect(reverse('shop:order_success'))
 
     def get_payment_url(self, order, request):
         return_link = request.build_absolute_uri(
@@ -285,21 +286,28 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
                 "return_url": return_link,
             },
             "capture": True,
-            "description": f"Заказ № {order.pk}"
+            "description": f"Заказ № {order.pk} by {order.user.username}"
         }, uuid.uuid4())
         if payment["status"] == "pending":
             payment_link = payment["confirmation"]["confirmation_url"]
+            order.payment_id = payment["id"]
+            order.save()
             return payment_link
         else:
             messages.error(self.request, "Ошибка при создании платежа. Попробуйте еще раз.")
+            # Создать страницу ошибки
             return reverse_lazy("shop:order_failure")
 
 
 class OrderSuccessView(LoginRequiredMixin, View):
     def get(self, request):
-        # Необходимо добавить проверку оплачен ли заказ и если да, то в заказе поменять флаг paid
         order_id = request.session.get('order_id')
         order = Order.objects.prefetch_related('items__product').get(id=order_id)
+        if order.payment_id:
+            payment_status = Payment.find_one(order.payment_id)
+            if payment_status["paid"]:
+                order.paid = True
+                order.save()
         context = {'order': order}
         return render(request, "shop/order_success.html", context)
 

@@ -21,6 +21,7 @@
                         <th>Пользователь</th>
                         <th>Дата</th>
                         <th>Статус</th>
+                        <th>Оплачен</th>
                         <th>Сумма</th>
                         <th>Детали</th>
                     </tr>
@@ -32,6 +33,13 @@
                             <td>{{ order.user.username }}</td>
                             <td>{{ order.order_date|date:"d.m.Y H:i" }}</td>
                             <td>{{ order.status }}</td>
+                            <td>
+                                {% if order.paid %}
+                            	Оплачено
+                                {% else %}
+                                Не оплачено
+                            {% endif %} 
+                            </td>
                             <td>{{ order.total_price }} руб.</td>
                             <td><a href="{% url 'shop:order_detail' order.id %}" class="view-details">Просмотреть</a>
                             <a href="{% url 'shop:orders_update_status' order.id %}" class="view-details">Изменить</a>
