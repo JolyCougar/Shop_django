@@ -4,6 +4,9 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
+
+from account.models import CustomUser
+from account.services import EmailService
 from .filters import ProductFilter
 from review.forms import ReviewForm
 from review.models import Review, Rating, RatingStar
@@ -13,11 +16,12 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet, OrderStatusForm
+from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet, OrderStatusForm, \
+    EmailForm
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category, Manufacturer
 from .services import PaymentOrder
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, View, CreateView, UpdateView, TemplateView
 
 log = logging.getLogger(__name__)
 
@@ -519,3 +523,21 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         order.save()
         # добавить логику оповещения пользователя о, изменении статуса заказа по E-mail
         return super().form_valid(form)
+
+
+class SendMailUserFromAdmin(View):
+    def get(self, request):
+        form = EmailForm()
+        users = CustomUser.objects.all()
+        return render(request, 'shop/profile_admin/send_message_to_user.html', {'form': form, 'users': users})
+
+    def post(self, request):
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            recipient = form.cleaned_data['recipient']
+            user = CustomUser.objects.get(email=recipient)
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            EmailService.send_email_from_admin(subject, message, user)
+            messages.success(request, "Письмо успешно отправленно!")
+            return redirect('shop:send_email_admin')

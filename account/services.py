@@ -3,6 +3,7 @@ from .models import EmailVerification
 from django.template.loader import render_to_string
 from .tasks import send_email_task
 from django.urls import reverse
+from decouple import config
 import random
 import string
 import logging
@@ -73,6 +74,16 @@ class EmailService:
                 'order_number': instance.pk,
             })
             send_email_task.delay(html_message, user.email, subject)
+
+    @staticmethod
+    def send_email_from_admin(edit_subject, message, user):
+        subject = f'MyShop: {edit_subject}!'
+        html_message = render_to_string('account/email/message_from_administrators.html', {
+            'user_name': user.username,
+            'message': message,
+            'email_for_message': config('EMAIL_HOST_USER'),
+        })
+        send_email_task.delay(html_message, user.email, subject)
 
 
 class PasswordGenerator:

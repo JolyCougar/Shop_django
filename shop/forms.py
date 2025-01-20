@@ -80,3 +80,9 @@ class OrderStatusForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ["status", "complete"]
+
+
+class EmailForm(forms.Form):
+    recipient = forms.EmailField()
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)
