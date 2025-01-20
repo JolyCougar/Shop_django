@@ -29,7 +29,11 @@
             <ul>
                 {{ product.attribute | safe }}
             </ul>
-        <p>Рейтинг: {{ avg_rating }}</p>
+            <div>
+                <h3>Наличие: {{ product.stock }} шт.</h3>
+                <p>Рейтинг: {{ avg_rating }}</p>
+            </div>
+
             <div class="price-block">
                 {% if product.discount > 0 %}
                     <p class="old-price">Старая цена: {{ product.price }} ₽</p>

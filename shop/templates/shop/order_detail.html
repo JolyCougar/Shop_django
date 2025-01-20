@@ -17,6 +17,7 @@
             <p><strong>Дата заказа:</strong> {{ order.order_date|date:"d.m.Y H:i" }}</p>
             <p><strong>Статус:</strong> {{ order.status }}</p>
             <p><strong>Получатель:</strong> {{ order.full_name }}</p>
+            <p><strong>E-mail:</strong> {{ order.user.email }}</p>
             <p><strong>Способ оплаты:</strong> {{ order.payment_method }}</p>
             <p><strong>Статус оплаты:</strong>
                 {% if order.paid %}

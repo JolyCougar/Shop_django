@@ -1,11 +1,6 @@
 import logging
 import json
 
-import uuid
-
-from yookassa import Configuration, Payment
-from decouple import config
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
@@ -20,6 +15,7 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from .forms import ProductForm, MarketingForm, ManufacturerForm, CategoryForm, ProductImageFormSet, OrderStatusForm
 from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Category, Manufacturer
+from .services import PaymentOrder
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
 
@@ -245,11 +241,17 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
 
             for cart_item in cart.cartitem_set.all():
                 product = cart_item.product
-
-                if product.stock < cart_item.quantity:
-                    raise ValidationError(
-                        f"Не хватает товара '{product.name}' на складе! Доступно: {product.stock} шт.")
-                    # Сделать ошибку, которая будет выводить соответствующую информацию
+                try:
+                    if product.stock < cart_item.quantity:
+                        log.info(f"Не хватает товара '{product.name}' на складе! "
+                                 f"Доступно: {product.stock} шт. Необходимо: {cart_item.quantity}")
+                        raise ValidationError(
+                            f"Не хватает товара '{product.name}' на складе! Доступно: {product.stock} шт.")
+                except ValidationError:
+                    return render(self.request, "shop/error_messages.html",
+                                  {"message_error": "Такого количества товара нет на складе, "
+                                                    "просим извинения за доставленные неудобства."
+                                                    f"Уменьшите кол-во товара {product.name} до {product.stock}"})
 
                 product.stock -= cart_item.quantity
                 if product.stock == 0:
@@ -269,37 +271,22 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
             self.request.session['order_id'] = order.id
 
             cart.cartitem_set.all().delete()
-            payment_url = self.get_payment_url(order, self.request)
-            post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
-            messages.success(self.request, "Сделан новый заказ.")
-            if order.payment_method == "Онлайн":
-                return HttpResponseRedirect(payment_url)
-            return HttpResponseRedirect(reverse('shop:order_success'))
-
-    def get_payment_url(self, order, request):
-        return_link = request.build_absolute_uri(
+            return_link = self.request.build_absolute_uri(
                 reverse('shop:order_success'))
-        payment = Payment.create({
-            "amount": {
-                "value": order.total_price,
-                "currency": "RUB",
-            },
-            "confirmation": {
-                "type": "redirect",
-                "return_url": return_link,
-            },
-            "capture": True,
-            "description": f"Заказ № {order.pk} от пользователя {order.user.username}"
-        }, uuid.uuid4())
-        if payment["status"] == "pending":
-            payment_link = payment["confirmation"]["confirmation_url"]
-            order.payment_id = payment["id"]
-            order.save()
-            return payment_link
-        else:
-            messages.error(self.request, "Ошибка при создании платежа. Попробуйте еще раз.")
-            # Создать страницу ошибки
-            return reverse_lazy("shop:order_failure")
+
+            post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
+            log.info("Сделан новый заказ.")
+            if order.payment_method == "Онлайн":
+                payment_url = PaymentOrder.get_payment_url(order, return_link)
+                if payment_url != "":
+                    return HttpResponseRedirect(payment_url)
+                else:
+                    return render(self.request, "shop/error_messages.html",
+                                  {"message_error": "Произошла ошибка при создании счета на оплату,"
+                                                    "заказ создан,но не оплачен, попробуйте оплатить снова,"
+                                                    "В разделе ваших заказов, если возникли проблемы или"
+                                                    "эта ошибка все равно происходит, напишите нам"})
+            return HttpResponseRedirect(reverse('shop:order_success'))
 
 
 class OrderSuccessView(LoginRequiredMixin, View):
@@ -307,10 +294,10 @@ class OrderSuccessView(LoginRequiredMixin, View):
         order_id = request.session.get('order_id')
         order = Order.objects.prefetch_related('items__product').get(id=order_id)
         if order.payment_id:
-            payment_status = Payment.find_one(order.payment_id)
-            if payment_status["paid"]:
+            if PaymentOrder.check_paid_order(order.payment_id):
                 order.paid = True
                 order.save()
+                log.info(f"Заказ #{order_id} оплачен!")
         context = {'order': order}
         return render(request, "shop/order_success.html", context)
 
@@ -532,6 +519,3 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         order.save()
         # добавить логику оповещения пользователя о, изменении статуса заказа по E-mail
         return super().form_valid(form)
-
-
-
