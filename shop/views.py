@@ -326,7 +326,6 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = "shop/order_detail.html"
 
 
-
 class ProductSearchView(ListView):
     model = Product
     template_name = 'shop/product_search.html'
@@ -526,7 +525,13 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         return super().form_valid(form)
 
 
-class SendMailUserFromAdmin(View):
+class SendMailUserFromAdmin(UserPassesTestMixin, LoginRequiredMixin, View):
+
+    def test_func(self):
+        if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
+            return True
+        return False
+
     def get(self, request):
         form = EmailForm()
         users = CustomUser.objects.all()
@@ -544,12 +549,11 @@ class SendMailUserFromAdmin(View):
             return redirect('shop:send_email_admin')
 
 
-class RepaymentOrder(View):
+class RepaymentOrder(LoginRequiredMixin, View):
     def get(self, request, pk):
-        # Необходимо сделать переключение статуса оплаты если пользователь успешно оплатил!!
         order = Order.objects.get(pk=pk)
         return_link = self.request.build_absolute_uri(
-            reverse('shop:order_detail', args=[pk]))
+            reverse('shop:repay_order_success', args=[pk]))
         pay_link = PaymentOrder.get_payment_url(order, return_link)
         if pay_link:
             return HttpResponseRedirect(pay_link)
@@ -558,6 +562,24 @@ class RepaymentOrder(View):
                           {"message_error": "Произошла ошибка при создании счета на оплату,"
                                             "заказ создан,но не оплачен, попробуйте оплатить снова,"
                                             "В разделе ваших заказов, если возникли проблемы или"
-                                            "эта ошибка все равно происходит, напишите нам"})
+                                            "эта ошибка все равно происходит, напишите нам"}
+                          )
 
 
+class PaySuccessView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        order = Order.objects.get(pk=pk)
+        if order.payment_id:
+            if PaymentOrder.check_paid_order(order.payment_id):
+                order.paid = True
+                order.save()
+                log.info(f"Заказ #{pk} оплачен!")
+                context = {'order': order}
+                return render(request, "shop/payment_success.html", context)
+            else:
+                return render(request, "shop/error_messages.html",
+                              {"message_error": "Произошла ошибка при создании счета на оплату,"
+                                                "заказ создан,но не оплачен, попробуйте оплатить снова,"
+                                                "В разделе ваших заказов, если возникли проблемы или"
+                                                "эта ошибка все равно происходит, напишите нам"}
+                              )
