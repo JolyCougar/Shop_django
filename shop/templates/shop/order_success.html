@@ -5,8 +5,8 @@
 {% block content %}
     <div class="container"
          style="max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        <h1 style="text-align: center; color: #333;">Заказ успешно создан!</h1>
-        <p style="text-align: center; font-size: 16px; color: #555;">Спасибо за ваш заказ. Мы свяжемся с вами в
+        <h1 style="text-align: center; color: #333;">Заказ успешно оформлен!</h1>
+        <p style="text-align: center; font-size: 16px; color: #555;">Спасибо за ваш заказ. Мы займемся вашим заказом в
             ближайшее время.</p>
 
         <!-- Информация о заказе -->
@@ -46,7 +46,7 @@
                     заказа
                 </th>
                  {% if order.paid %}
-                 	<td style="border: 1px solid #ddd; padding: 10px;">Оплаченно</td>
+                 	<td style="border: 1px solid #ddd; padding: 10px;">Оплачено</td>
                      {% else %}
                      <td style="border: 1px solid #ddd; padding: 10px;">Не оплачено</td>
                  {% endif %} 

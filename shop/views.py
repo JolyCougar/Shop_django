@@ -326,6 +326,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = "shop/order_detail.html"
 
 
+
 class ProductSearchView(ListView):
     model = Product
     template_name = 'shop/product_search.html'
@@ -541,3 +542,22 @@ class SendMailUserFromAdmin(View):
             EmailService.send_email_from_admin(subject, message, user)
             messages.success(request, "Письмо успешно отправленно!")
             return redirect('shop:send_email_admin')
+
+
+class RepaymentOrder(View):
+    def get(self, request, pk):
+        # Необходимо сделать переключение статуса оплаты если пользователь успешно оплатил!!
+        order = Order.objects.get(pk=pk)
+        return_link = self.request.build_absolute_uri(
+            reverse('shop:order_detail', args=[pk]))
+        pay_link = PaymentOrder.get_payment_url(order, return_link)
+        if pay_link:
+            return HttpResponseRedirect(pay_link)
+        else:
+            return render(self.request, "shop/error_messages.html",
+                          {"message_error": "Произошла ошибка при создании счета на оплату,"
+                                            "заказ создан,но не оплачен, попробуйте оплатить снова,"
+                                            "В разделе ваших заказов, если возникли проблемы или"
+                                            "эта ошибка все равно происходит, напишите нам"})
+
+
