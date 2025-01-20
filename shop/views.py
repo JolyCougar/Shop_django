@@ -249,8 +249,11 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
                 if product.stock < cart_item.quantity:
                     raise ValidationError(
                         f"Не хватает товара '{product.name}' на складе! Доступно: {product.stock} шт.")
+                    # Сделать ошибку, которая будет выводить соответствующую информацию
 
                 product.stock -= cart_item.quantity
+                if product.stock == 0:
+                    product.archived = True
                 product.save()
 
                 OrderItem.objects.create(
@@ -267,11 +270,11 @@ class CreateOrderView(LoginRequiredMixin, CreateView):
 
             cart.cartitem_set.all().delete()
             payment_url = self.get_payment_url(order, self.request)
-        post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
-        messages.success(self.request, "Сделан новый заказ.")
-        if order.payment_method == "Онлайн":
-            return HttpResponseRedirect(payment_url)
-        return HttpResponseRedirect(reverse('shop:order_success'))
+            post_save.send(sender=Order, instance=self.object, created=True, request=self.request)
+            messages.success(self.request, "Сделан новый заказ.")
+            if order.payment_method == "Онлайн":
+                return HttpResponseRedirect(payment_url)
+            return HttpResponseRedirect(reverse('shop:order_success'))
 
     def get_payment_url(self, order, request):
         return_link = request.build_absolute_uri(
@@ -527,6 +530,7 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         order.status = form.cleaned_data.get('status', order.status)
         order.complete = form.cleaned_data.get('complete', order.complete)
         order.save()
+        # добавить логику оповещения пользователя о, изменении статуса заказа по E-mail
         return super().form_valid(form)
 
 
