@@ -28,7 +28,7 @@
                         <td>{{ item.product.price }}₽</td>
                         <td>{{ item.product.discount }}%</td>
                         <td>
-                            <input type="number" value="{{ item.quantity }}" min="1" class="quantity"
+                            <input type="number" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="quantity"
                                    data-price="{{ item.product.price }}">
                         </td>
                         <td class="item-total">{{ item.product.discounted_price }}₽</td>
