@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статус обновился</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #7d059c;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            background: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background: #7d059c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .cta-button:hover {
+            background: #5a0473;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>MyShop: У вашего заказа обновился статус!</h1>
+    </div>
+    <div class="content">
+        <h2 style="color: #007bff;">Здравствуйте, {{ user_name }}!</h2>
+        <p> У вашего заказа № : {{ order_number }} изменился статус на: </p>
+        <h3>{{ order_status }}</h3>
+        <p>Спасибо, что пользуетесь нашими услугами </p>
+        <p>Зайдите на сайт, что бы узнать подробности и посмотреть наши новинки!</p>
+    </div>
+    <div class="footer">
+        <p>© 2025 MyShop. Все права защищены.</p>
+    </div>
+</div>
+</body>
+</html>
