@@ -8,7 +8,7 @@ from .views import (ProductListView, ProductDetailView, AddToCartView,
                     CategoryCreateAdminView, MarketingAdminCreateView, MarketingAdminListView,
                     MarketingAdminUpdateView, UpdateCartView, OrdersAdminListView,
                     OrdersUpdateAdminListView, SendMailUserFromAdmin, RepaymentOrder,
-                    PaySuccessView)
+                    PaySuccessView, CanceledOrder)
 
 app_name = 'shop'
 
@@ -42,5 +42,6 @@ urlpatterns = [
     path('profile/send_email/', SendMailUserFromAdmin.as_view(), name='send_email_admin'),
     path('profile/pay/<int:pk>/', RepaymentOrder.as_view(), name='repay_order'),
     path('profile/pay/<int:pk>/success/', PaySuccessView.as_view(), name='repay_order_success'),
+    path('orders/<int:pk>/cancel/', CanceledOrder.as_view(), name='canceled_order'),
 
 ]

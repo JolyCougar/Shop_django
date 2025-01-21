@@ -314,11 +314,13 @@ class OrdersListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         filter_slug = self.kwargs.get("slug")
         if filter_slug == "all":
-            return Order.objects.all()
+            return Order.objects.filter(canceled=False)
         elif filter_slug == "complete":
-            return Order.objects.filter(complete=True)
+            return Order.objects.filter(complete=True, canceled=False)
+        elif filter_slug == "canceled":
+            return Order.objects.filter(canceled=True)
         else:
-            return Order.objects.filter(complete=False)
+            return Order.objects.filter(complete=False, canceled=False)
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -583,3 +585,19 @@ class PaySuccessView(LoginRequiredMixin, View):
                                                 "В разделе ваших заказов, если возникли проблемы или"
                                                 "эта ошибка все равно происходит, напишите нам"}
                               )
+
+class CanceledOrder(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        order = Order.objects.get(pk=pk)
+        if order.status == "В обработке" and order.paid == False:
+            order.canceled = True
+            order.save()
+            messages.info(request,f"Заказ # {pk} успешно отменен.")
+            return HttpResponseRedirect(reverse('shop:orders_user', args=["active"]))
+        else:
+            return render(request, "shop/error_messages.html",
+                          {"message_error": "Ошибка! Вы не можете отменить заказ если "
+                                            "он не находится в статусе: В обработке и оплачен "
+                                            "Для отмены заказа свяжитесь с администрацией!"}
+                          )
+

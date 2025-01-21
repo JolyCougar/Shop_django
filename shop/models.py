@@ -84,6 +84,7 @@ class Order(models.Model):
     promo = models.CharField(max_length=20, null=True, blank=True)
     complete = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)
     payment_id = models.CharField(max_length=200, null=True)
     full_name = models.CharField(max_length=255, verbose_name="ФИО получателя", null=True)
     city = models.CharField(max_length=100, verbose_name="Город", null=True)

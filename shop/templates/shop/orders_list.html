@@ -11,6 +11,13 @@
 {% block content %}
     <div class="container profile">
         <h1>Мои заказы</h1>
+     {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
         <div class="profile-orders">
             {% if orders %}
@@ -34,11 +41,22 @@
                             <td>{% if order.paid %}
                             	Оплачено
                                 {% else %}
-                                Не оплачено {% if not order.complete %}<a href="{% url 'shop:repay_order' order.pk %}" class="back-to-product-list-btn"> Оплатить </a>{% endif %}
+                                Не оплачено
+                                {% if not order.complete %}
+                                {% if not order.canceled %}
+                                    <a href="{% url 'shop:repay_order' order.pk %}" class="back-to-product-list-btn"> Оплатить </a>
+                                {% endif %}
+                                    {% endif %}
                             {% endif %} 
                             </td>
                             <td>{{ order.total_price }} руб.</td>
                             <td><a href="{% url 'shop:order_detail' order.id %}" class="view-details">Просмотреть</a>
+                            {% if not order.canceled %}
+                                {% if not order.paid %}
+                                	<a href="{% url 'shop:canceled_order' order.id %}" class="view-details">Отменить</a>
+                                {% endif %}
+                            {% endif %}
+
                             </td>
                         </tr>
                     {% endfor %}
