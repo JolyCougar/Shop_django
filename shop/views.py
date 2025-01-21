@@ -523,6 +523,9 @@ class OrdersUpdateAdminListView(UserPassesTestMixin, LoginRequiredMixin, UpdateV
         order.status = form.cleaned_data.get('status', order.status)
         order.complete = form.cleaned_data.get('complete', order.complete)
         order.save()
+        post_save.send(sender=Order, instance=self.object, created=False,
+                       request=self.request, order_pk=order.pk, order_status=order.status,
+                       username_send=order.user.username, user_email_send=order.user.email)
         # добавить логику оповещения пользователя о, изменении статуса заказа по E-mail
         return super().form_valid(form)
 

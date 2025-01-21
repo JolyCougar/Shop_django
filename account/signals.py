@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from .services import EmailService
 from .models import UserSubscription, CustomUser
 from shop.models import Cart, CartItem, Product, Order
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 
 
 @receiver(user_logged_in)
@@ -46,3 +46,13 @@ def notify_users_about_promotion(sender, instance, created, **kwargs):
         users = CustomUser.objects.filter(is_superuser=True) | CustomUser.objects.filter(groups=moderator_group)
         user_list = list(users)
         # EmailService.send_info_new_order(user_list, instance)
+
+
+@receiver(post_save, sender=Order)
+def notify_users_about_change_status(sender, instance, created, **kwargs):
+    order_pk = kwargs.get('order_pk')
+    order_status = kwargs.get('order_status')
+    username_send = kwargs.get('username_send')
+    user_email_send = kwargs.get('user_email_send')
+    if not created:
+        EmailService.notify_change_order_status(order_pk, order_status, username_send, user_email_send)
