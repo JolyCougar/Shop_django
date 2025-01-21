@@ -22,10 +22,11 @@ from .models import Product, Order, Cart, CartItem, OrderItem, Marketing, Catego
 from .services import PaymentOrder
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
+from django.views.decorators.cache import cache_page
 
 log = logging.getLogger(__name__)
 
-
+@cache_page(60 * 15)
 class MainPage(ListView):
     model = Marketing
     template_name = "shop/main.html"
@@ -37,7 +38,7 @@ class MainPage(ListView):
         context["popular_products"] = Product.objects.all()[:5]
         return context
 
-
+@cache_page(60 * 15)
 class PromotionListView(ListView):
     model = Marketing
     template_name = "shop/promotion_list.html"
@@ -45,7 +46,7 @@ class PromotionListView(ListView):
     queryset = Marketing.objects.filter(archived=False)
     paginate_by = 6
 
-
+@cache_page(60 * 15)
 class PromotionDetailView(DetailView):
     model = Marketing
     template_name = "shop/promotion_detail.html"
