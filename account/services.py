@@ -88,7 +88,7 @@ class EmailService:
     @staticmethod
     def notify_change_order_status(order_pk, order_status, username_send, user_email_send):
         subject = f'MyShop: Статус вашего заказа поменялся!'
-        html_message = render_to_string('account/email/message_from_administrators.html', {
+        html_message = render_to_string('account/email/messages_info_status_order.html', {
             'user_name': username_send,
             'order_status': order_status,
             'order_number': order_pk
