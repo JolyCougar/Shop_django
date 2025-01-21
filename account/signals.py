@@ -55,4 +55,5 @@ def notify_users_about_change_status(sender, instance, created, **kwargs):
     username_send = kwargs.get('username_send')
     user_email_send = kwargs.get('user_email_send')
     if not created:
-        EmailService.notify_change_order_status(order_pk, order_status, username_send, user_email_send)
+        ...
+        # EmailService.notify_change_order_status(order_pk, order_status, username_send, user_email_send)

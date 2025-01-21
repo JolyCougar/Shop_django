@@ -93,7 +93,7 @@ class EmailService:
             'order_status': order_status,
             'order_number': order_pk
         })
-        # send_email_task.delay(html_message, user_email_send, subject)
+        send_email_task.delay(html_message, user_email_send, subject)
 
 
 class PasswordGenerator:
