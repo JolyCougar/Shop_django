@@ -23,8 +23,7 @@
                 {% if order.paid %}
                     Оплачено
                 {% else %}
-                    Не оплачено <a href="{% url 'shop:repay_order' order.pk %}"> Оплатить </a>
-                    {#                     Сделать логику повторной оплаты#}
+                    Не оплачено <a href="{% url 'shop:repay_order' order.pk %}" class="back-to-product-list-btn"> Оплатить </a>
                 {% endif %} </p>
             <p><strong>Способ доставки:</strong> {{ order.delivery_method }}</p>
             <p><strong>Город:</strong> {{ order.city }}</p>

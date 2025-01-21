@@ -34,7 +34,7 @@
                             <td>{% if order.paid %}
                             	Оплачено
                                 {% else %}
-                                Не оплачено
+                                Не оплачено {% if not order.complete %}<a href="{% url 'shop:repay_order' order.pk %}" class="back-to-product-list-btn"> Оплатить </a>{% endif %}
                             {% endif %} 
                             </td>
                             <td>{{ order.total_price }} руб.</td>
