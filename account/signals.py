@@ -2,7 +2,8 @@ from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from shop.models import Marketing
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
+from django.core.cache import cache
 from .services import EmailService
 from .models import UserSubscription, CustomUser
 from shop.models import Cart, CartItem, Product, Order
@@ -57,3 +58,17 @@ def notify_users_about_change_status(sender, instance, created, **kwargs):
     if not created:
         ...
         # EmailService.notify_change_order_status(order_pk, order_status, username_send, user_email_send)
+
+
+
+def clear_marketing_cache():
+    cache.clear()
+
+
+@receiver(post_save, sender=Marketing)
+def marketing_saved(sender, instance, created, **kwargs):
+    clear_marketing_cache()
+
+@receiver(post_delete, sender=Marketing)
+def marketing_deleted(sender, instance, **kwargs):
+    clear_marketing_cache()
