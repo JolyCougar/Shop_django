@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'review.apps.ReviewConfig',
     'django_filters',
+
+    'debug_toolbar',
 ]
 
 SITE_ID = 1
@@ -47,6 +49,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'shopSite.urls'
@@ -136,11 +140,11 @@ LOGIN_REDIRECT_URL = reverse_lazy("shop:main")
 LOGOUT_REDIRECT_URL = reverse_lazy('shop:main')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = config('DJANGO_EMAIL_HOST')
+EMAIL_PORT = config('DJANGO_EMAIL_PORT')
+EMAIL_USE_TLS = config('DJANGO_EMAIL_USE_TLS')
+EMAIL_HOST_USER = config('DJANGO_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('DJANGO_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CELERY_BROKER_URL = config("DJANGO_CELERY_BROKER_URL")
@@ -156,7 +160,7 @@ Configuration.secret_key = config("SHOP_MONEY_SECRET_KEY")
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://0.0.0.0:6379/1',
+        'LOCATION': config('DJANGO_CACHE_LOCATION'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
