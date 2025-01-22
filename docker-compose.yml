@@ -5,7 +5,9 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: gunicorn shopSite.wsgi:application --bind 0.0.0.0:8000 --workers 3 --max-requests 1000 --max-requests-jitter 100 --timeout 30 --log-level debug
+    command: gunicorn shopSite.wsgi:application --bind 0.0.0.0:8000 --workers 3 --max-requests 1000 --max-requests-jitter 100 --timeout 30 --log-level info
+    depends_on:
+      - redis
     volumes:
       - static_volume:/home/app/web/static/
       - media_volume:/home/app/web/media/
@@ -15,6 +17,17 @@ services:
       - my_network
     restart: always
 
+  db:
+    image: postgres:17-alpine
+    volumes:
+      - pg_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER='user'
+      - POSTGRES_PASSWORD='password'
+      - POSTGRES_DB='shop'
+    networks:
+      - my_network
+    restart: always
 
   celery:
     build:
@@ -40,6 +53,7 @@ services:
 volumes:
   static_volume:
   media_volume:
+  pg_db_data:
 
 
 networks:
