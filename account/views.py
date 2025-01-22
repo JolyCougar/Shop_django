@@ -80,7 +80,7 @@ class CustomLogoutView(LogoutView):
         response = super().get(request, *args, **kwargs)
         return response
 
-@cache_page(60 * 15)
+
 class ProfileView(DetailView):
     model = CustomUser
     template_name = "account/profile.html"

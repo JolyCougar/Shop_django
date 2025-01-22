@@ -4,7 +4,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django_filters.views import FilterView
-
+from decouple import config
 from account.models import CustomUser
 from account.services import EmailService
 from .filters import ProductFilter
@@ -25,8 +25,9 @@ from django.views.generic import ListView, DetailView, View, CreateView, UpdateV
 from django.views.decorators.cache import cache_page
 
 log = logging.getLogger(__name__)
+pagination_count = config("PAGINATION_BY")
 
-@cache_page(60 * 15)
+
 class MainPage(ListView):
     model = Marketing
     template_name = "shop/main.html"
@@ -38,15 +39,15 @@ class MainPage(ListView):
         context["popular_products"] = Product.objects.all()[:5]
         return context
 
-@cache_page(60 * 15)
+
 class PromotionListView(ListView):
     model = Marketing
     template_name = "shop/promotion_list.html"
     context_object_name = "promotions"
     queryset = Marketing.objects.filter(archived=False)
-    paginate_by = 6
+    paginate_by = pagination_count
 
-@cache_page(60 * 15)
+
 class PromotionDetailView(DetailView):
     model = Marketing
     template_name = "shop/promotion_detail.html"
@@ -60,7 +61,7 @@ class ProductListView(FilterView):
     filterset_class = ProductFilter
     template_name = "shop/product_list.html"
     queryset = Product.objects.filter(archived=False)
-    paginate_by = 10
+    paginate_by = pagination_count
 
 
 class ProductByCategoryView(FilterView):
@@ -68,7 +69,7 @@ class ProductByCategoryView(FilterView):
     template_name = "shop/product_list.html"
     filterset_class = ProductFilter
     context_object_name = "product_list"
-    paginate_by = 10
+    paginate_by = pagination_count
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")
@@ -87,7 +88,7 @@ class ProductsNewView(FilterView):
     template_name = 'shop/product_list.html'
     filterset_class = ProductFilter
     context_object_name = "product_list"
-    paginate_by = 10
+    paginate_by = pagination_count
 
     def get_queryset(self):
         return Product.objects.filter(new=True, archived=False)
@@ -101,11 +102,10 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        avg_rating = Rating.objects.filter(product=self.object).aggregate(Avg('star__value'))['star__value__avg']
-        avg_rating = avg_rating if avg_rating is not None else 0
-
+        avg_rating = Rating.objects.filter(product=self.object).aggregate(Avg('star__value'))['star__value__avg'] or 0
         context['avg_rating'] = avg_rating
-        context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True)
+
+        context['reviews'] = Review.objects.filter(product=self.object, parent__isnull=True).prefetch_related('author')
         context['review_form'] = ReviewForm()
 
         user = self.request.user
@@ -333,7 +333,7 @@ class ProductSearchView(ListView):
     model = Product
     template_name = 'shop/product_search.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = pagination_count
 
     def get_queryset(self):
         query = self.request.GET.get('search', '')
@@ -349,7 +349,7 @@ class ListProductAdminView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = Product
     template_name = 'shop/profile_admin/product_list_admin.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = pagination_count
 
     def test_func(self):
         if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
@@ -457,7 +457,7 @@ class MarketingAdminListView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = Marketing
     template_name = 'shop/profile_admin/marketing_list.html'
     context_object_name = 'marketings'
-    paginate_by = 10
+    paginate_by = pagination_count
 
     def test_func(self):
         if self.request.user.groups.filter(name="Модераторы") or self.request.user.is_superuser:
