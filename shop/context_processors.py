@@ -11,6 +11,6 @@ def categories_context(request):
 
     if categories is None:
         categories = Category.objects.all()
-        cache.set('categories', categories, 3600)
+        cache.set('categories', list(categories), 60 * 15)
 
     return {'categories': categories}

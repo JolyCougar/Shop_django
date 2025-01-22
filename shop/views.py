@@ -23,11 +23,13 @@ from .services import PaymentOrder
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, View, CreateView, UpdateView
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 log = logging.getLogger(__name__)
 pagination_count = config("PAGINATION_BY")
 
 
+@method_decorator(cache_page(60 * 15, key_prefix='main_page'), name='dispatch')
 class MainPage(ListView):
     model = Marketing
     template_name = "shop/main.html"
@@ -40,6 +42,7 @@ class MainPage(ListView):
         return context
 
 
+@method_decorator(cache_page(60 * 15, key_prefix='promo_list'), name='dispatch')
 class PromotionListView(ListView):
     model = Marketing
     template_name = "shop/promotion_list.html"
@@ -48,6 +51,7 @@ class PromotionListView(ListView):
     paginate_by = pagination_count
 
 
+@method_decorator(cache_page(60 * 15, key_prefix='promo_detail'), name='dispatch')
 class PromotionDetailView(DetailView):
     model = Marketing
     template_name = "shop/promotion_detail.html"
@@ -589,13 +593,14 @@ class PaySuccessView(LoginRequiredMixin, View):
                                                 "эта ошибка все равно происходит, напишите нам"}
                               )
 
+
 class CanceledOrder(LoginRequiredMixin, View):
     def get(self, request, pk):
         order = Order.objects.get(pk=pk)
         if order.status == "В обработке" and order.paid == False:
             order.canceled = True
             order.save()
-            messages.info(request,f"Заказ # {pk} успешно отменен.")
+            messages.info(request, f"Заказ # {pk} успешно отменен.")
             return HttpResponseRedirect(reverse('shop:orders_user', args=["active"]))
         else:
             return render(request, "shop/error_messages.html",
@@ -603,4 +608,3 @@ class CanceledOrder(LoginRequiredMixin, View):
                                             "он не находится в статусе: В обработке и оплачен "
                                             "Для отмены заказа свяжитесь с администрацией!"}
                           )
-

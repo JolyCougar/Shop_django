@@ -16,6 +16,7 @@ from .models import CustomUser, EmailVerification, UserSubscription
 from .services import EmailService, PasswordGenerator
 from django.views.decorators.cache import cache_page
 import logging
+from django.utils.decorators import method_decorator
 
 log = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ class CustomLogoutView(LogoutView):
         response = super().get(request, *args, **kwargs)
         return response
 
-
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProfileView(DetailView):
     model = CustomUser
     template_name = "account/profile.html"
