@@ -5,9 +5,11 @@ from shop.models import Marketing
 from django.db.models.signals import post_save, post_delete
 from django.core.cache import cache
 from .services import EmailService
+from django.db.models.signals import pre_save
 from .models import UserSubscription, CustomUser
 from shop.models import Cart, CartItem, Product, Order
 from django.contrib.auth.models import Group
+import os
 
 
 @receiver(user_logged_in)
@@ -60,7 +62,6 @@ def notify_users_about_change_status(sender, instance, created, **kwargs):
         # EmailService.notify_change_order_status(order_pk, order_status, username_send, user_email_send)
 
 
-
 def clear_marketing_cache():
     cache.clear()
 
@@ -69,6 +70,20 @@ def clear_marketing_cache():
 def marketing_saved(sender, instance, created, **kwargs):
     clear_marketing_cache()
 
+
 @receiver(post_delete, sender=Marketing)
 def marketing_deleted(sender, instance, **kwargs):
     clear_marketing_cache()
+
+
+@receiver(pre_save, sender=CustomUser)
+def delete_old_avatar(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            old_avatar = CustomUser.objects.get(pk=instance.pk).avatar
+        except CustomUser.DoesNotExist:
+            old_avatar = None
+
+        if old_avatar and old_avatar != instance.avatar:
+            if os.path.isfile(old_avatar.path):
+                os.remove(old_avatar.path)
