@@ -86,3 +86,9 @@ class MarketingAdmin(admin.ModelAdmin):
 @admin.register(Manufacturer)
 class Manufacturer(admin.ModelAdmin):
     list_display = "name",
+
+
+admin.site.site_header = "MyShop"
+admin.site.site_title = "Admin"
+admin.site.index_title = "Главное меню"
+admin.site.name = "MyShop"
