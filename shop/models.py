@@ -29,7 +29,7 @@ class ProductPathGenerator:
 
     @staticmethod
     def marketing_images_directory_path(instance: "Marketing", filename: str) -> str:
-        return f"marketing/images/{filename}"
+        return f"marketing/promo_{instance.pk}/images/{filename}"
 
 
 class Product(models.Model):
